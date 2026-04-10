@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>通用版健康与身材管理</title>
+  <style>
+    :root {
+      --bg: #f4f8fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2f7cf6;
+      --primary-soft: #dce9ff;
+      --border: #e6edf5;
+      --success: #16a34a;
+      --danger: #ef4444;
+      --shadow: 0 12px 30px rgba(31, 41, 55, 0.08);
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(180deg, #f7fbff 0%, var(--bg) 45%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .app-header {
+      margin-bottom: 18px;
+    }
+
+    .app-title {
+      font-size: clamp(1.4rem, 2.6vw, 2rem);
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      margin-bottom: 6px;
+    }
+
+    .app-subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .card-desc {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 14px;
+    }
+
+    .section {
+      margin-bottom: 14px;
+    }
+
+    .section:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .section-label {
+      display: block;
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .grid-three {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .grid-four {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    input,
+    textarea,
+    button {
+      font: inherit;
+    }
+
+    .input,
+    .textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: #fcfdff;
+      border-radius: var(--radius-sm);
+      padding: 11px 12px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    .input:focus,
+    .textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(47, 124, 246, 0.12);
+    }
+
+    .textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    .water-counter {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      background: #f8fbff;
+    }
+
+    .counter-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: transparent;
+      font-size: 1.2rem;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .counter-btn:hover {
+      background: var(--primary-soft);
+    }
+
+    .counter-value {
+      min-width: 96px;
+      text-align: center;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1rem;
+      padding: 0 10px;
+    }
+
+    .actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: transform 0.06s, opacity 0.2s, box-shadow 0.2s;
+      font-weight: 600;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(47, 124, 246, 0.25);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.95;
+    }
+
+    .date-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .date-row label {
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .tip {
+      margin-top: 8px;
+      font-size: 0.88rem;
+      color: #0f766e;
+      background: #e6fffa;
+      border: 1px solid #c5f3ea;
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      margin-top: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 640px;
+      background: #fff;
+    }
+
+    th,
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: #f7fbff;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 14px 10px;
+      font-size: 0.9rem;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%) translateY(18px);
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(17, 24, 39, 0.92);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      transition: opacity 0.25s, transform 0.25s;
+      z-index: 99;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (min-width: 860px) {
+      body {
+        padding: 26px;
+      }
+
+      .layout {
+        grid-template-columns: 1.1fr 1fr;
+        gap: 18px;
+      }
+
+      .grid-three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid-four {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="app-header">
+      <h1 class="app-title">通用版健康与身材管理</h1>
+      <p class="app-subtitle">每日习惯打卡 + 每周身材数据追踪（本地保存）</p>
+    </header>
+
+    <main class="layout">
+      <!-- 模块一：每日习惯打卡 -->
+      <section class="card">
+        <h2 class="card-title">模块一：每日习惯打卡（Daily Tracker）</h2>
+        <p class="card-desc">按日期记录当天饮食、饮水和运动内容。</p>
+
+        <div class="date-row">
+          <label for="dailyDate">记录日期</label>
+          <input id="dailyDate" class="input" type="date" />
+        </div>
+
+        <div class="section">
+          <span class="section-label">三餐记录</span>
+          <div class="grid-three">
+            <input id="breakfast" class="input" type="text" placeholder="早餐吃了什么" />
+            <input id="lunch" class="input" type="text" placeholder="午餐吃了什么" />
+            <input id="dinner" class="input" type="text" placeholder="晚餐吃了什么" />
+          </div>
+        </div>
+
+        <div class="section">
+          <span class="section-label">饮水追踪</span>
+          <div class="water-counter" role="group" aria-label="饮水计数器">
+            <button id="waterMinus" class="counter-btn" type="button" aria-label="减少一杯">-</button>
+            <div id="waterValue" class="counter-value">0 杯</div>
+            <button id="waterPlus" class="counter-btn" type="button" aria-label="增加一杯">+</button>
+          </div>
+        </div>
+
+        <div class="section">
+          <label class="section-label" for="exercise">运动记录</label>
+          <textarea
+            id="exercise"
+            class="textarea"
+            placeholder="例如：慢跑30分钟 + 拉伸10分钟"></textarea>
+        </div>
+
+        <div class="actions">
+          <button id="saveDailyBtn" class="btn btn-primary" type="button">保存今日记录</button>
+        </div>
+      </section>
+
+      <!-- 模块二：每周身材数据追踪 -->
+      <section class="card">
+        <h2 class="card-title">模块二：每周身材数据追踪（Weekly Measurements）</h2>
+        <p class="card-desc">建议每周记录一次，方便观察趋势变化。</p>
+        <p class="tip">提示：围度和体重建议固定每周同一时间记录，便于横向对比。</p>
+
+        <div class="section" style="margin-top: 14px;">
+          <div class="grid-four">
+            <div>
+              <label class="section-label" for="measureDate">日期</label>
+              <input id="measureDate" class="input" type="date" />
+            </div>
+            <div>
+              <label class="section-label" for="weight">体重（kg）</label>
+              <input id="weight" class="input" type="number" step="0.1" min="0" placeholder="如 52.3" />
+            </div>
+            <div>
+              <label class="section-label" for="chest">胸围（cm）</label>
+              <input id="chest" class="input" type="number" step="0.1" min="0" placeholder="如 85" />
+            </div>
+            <div>
+              <label class="section-label" for="waist">腰围（cm）</label>
+              <input id="waist" class="input" type="number" step="0.1" min="0" placeholder="如 68" />
+            </div>
+            <div>
+              <label class="section-label" for="hip">臀围（cm）</label>
+              <input id="hip" class="input" type="number" step="0.1" min="0" placeholder="如 92" />
+            </div>
+            <div>
+              <label class="section-label" for="abdomen">小腹围（cm）</label>
+              <input id="abdomen" class="input" type="number" step="0.1" min="0" placeholder="如 75" />
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="addMeasureBtn" class="btn btn-primary" type="button">添加本周数据</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>日期</th>
+                <th>体重(kg)</th>
+                <th>胸围(cm)</th>
+                <th>腰围(cm)</th>
+                <th>臀围(cm)</th>
+                <th>小腹围(cm)</th>
+              </tr>
+            </thead>
+            <tbody id="measureTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    // -----------------------------
+    // 通用工具：日期和提示
+    // -----------------------------
+    const STORAGE_KEYS = {
+      daily: "health_app_daily_records",
+      weekly: "health_app_weekly_measurements"
+    };
+
+    function getTodayString() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, "0");
+      const d = String(now.getDate()).padStart(2, "0");
+      return y + "-" + m + "-" + d;
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1600);
+    }
+
+    function parseJSONSafe(raw, fallback) {
+      try {
+        return raw ? JSON.parse(raw) : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    // -----------------------------
+    // 模块一：每日习惯打卡逻辑
+    // -----------------------------
+    const dailyDateEl = document.getElementById("dailyDate");
+    const breakfastEl = document.getElementById("breakfast");
+    const lunchEl = document.getElementById("lunch");
+    const dinnerEl = document.getElementById("dinner");
+    const exerciseEl = document.getElementById("exercise");
+    const waterValueEl = document.getElementById("waterValue");
+    const waterMinusEl = document.getElementById("waterMinus");
+    const waterPlusEl = document.getElementById("waterPlus");
+    const saveDailyBtn = document.getElementById("saveDailyBtn");
+
+    let waterCount = 0;
+
+    function getDailyAllRecords() {
+      const raw = localStorage.getItem(STORAGE_KEYS.daily);
+      return parseJSONSafe(raw, {});
+    }
+
+    function setDailyAllRecords(data) {
+      localStorage.setItem(STORAGE_KEYS.daily, JSON.stringify(data));
+    }
+
+    function renderWaterCount() {
+      waterValueEl.textContent = waterCount + " 杯";
+    }
+
+    function loadDailyByDate(dateStr) {
+      const all = getDailyAllRecords();
+      const record = all[dateStr] || {
+        breakfast: "",
+        lunch: "",
+        dinner: "",
+        water: 0,
+        exercise: ""
+      };
+
+      breakfastEl.value = record.breakfast;
+      lunchEl.value = record.lunch;
+      dinnerEl.value = record.dinner;
+      exerciseEl.value = record.exercise;
+      waterCount = Number(record.water) || 0;
+      renderWaterCount();
+    }
+
+    function saveDailyByCurrentDate() {
+      const dateStr = dailyDateEl.value;
+      if (!dateStr) {
+        showToast("请先选择日期");
+        return;
+      }
+
+      const all = getDailyAllRecords();
+      all[dateStr] = {
+        breakfast: breakfastEl.value.trim(),
+        lunch: lunchEl.value.trim(),
+        dinner: dinnerEl.value.trim(),
+        water: waterCount,
+        exercise: exerciseEl.value.trim(),
+        updatedAt: Date.now()
+      };
+      setDailyAllRecords(all);
+
+      // 轻量按钮反馈
+      const oldText = saveDailyBtn.textContent;
+      saveDailyBtn.textContent = "已保存";
+      window.setTimeout(() => {
+        saveDailyBtn.textContent = oldText;
+      }, 1200);
+
+      showToast("今日记录已保存");
+    }
+
+    dailyDateEl.addEventListener("change", () => {
+      loadDailyByDate(dailyDateEl.value);
+    });
+
+    waterMinusEl.addEventListener("click", () => {
+      waterCount = Math.max(0, waterCount - 1);
+      renderWaterCount();
+    });
+
+    waterPlusEl.addEventListener("click", () => {
+      waterCount += 1;
+      renderWaterCount();
+    });
+
+    saveDailyBtn.addEventListener("click", saveDailyByCurrentDate);
+
+    // -----------------------------
+    // 模块二：每周身材数据追踪逻辑
+    // -----------------------------
+    const measureDateEl = document.getElementById("measureDate");
+    const weightEl = document.getElementById("weight");
+    const chestEl = document.getElementById("chest");
+    const waistEl = document.getElementById("waist");
+    const hipEl = document.getElementById("hip");
+    const abdomenEl = document.getElementById("abdomen");
+    const addMeasureBtn = document.getElementById("addMeasureBtn");
+    const measureTableBody = document.getElementById("measureTableBody");
+
+    function getWeeklyRecords() {
+      const raw = localStorage.getItem(STORAGE_KEYS.weekly);
+      return parseJSONSafe(raw, []);
+    }
+
+    function setWeeklyRecords(data) {
+      localStorage.setItem(STORAGE_KEYS.weekly, JSON.stringify(data));
+    }
+
+    function toNumberOrEmpty(value) {
+      if (value === "" || value === null || value === undefined) return "";
+      const n = Number(value);
+      return Number.isFinite(n) ? n : "";
+    }
+
+    function renderWeeklyTable() {
+      const records = getWeeklyRecords()
+        .slice()
+        .sort((a, b) => (a.date < b.date ? 1 : -1));
+
+      if (records.length === 0) {
+        measureTableBody.innerHTML = '<tr><td colspan="6" class="empty">暂无记录，先添加一条本周数据吧。</td></tr>';
+        return;
+      }
+
+      const rows = records.map((item) => {
+        return (
+          "<tr>" +
+          "<td>" + item.date + "</td>" +
+          "<td>" + (item.weight ?? "") + "</td>" +
+          "<td>" + (item.chest ?? "") + "</td>" +
+          "<td>" + (item.waist ?? "") + "</td>" +
+          "<td>" + (item.hip ?? "") + "</td>" +
+          "<td>" + (item.abdomen ?? "") + "</td>" +
+          "</tr>"
+        );
+      });
+
+      measureTableBody.innerHTML = rows.join("");
+    }
+
+    function addWeeklyMeasurement() {
+      const date = measureDateEl.value;
+      if (!date) {
+        showToast("请选择日期");
+        return;
+      }
+
+      const entry = {
+        date,
+        weight: toNumberOrEmpty(weightEl.value),
+        chest: toNumberOrEmpty(chestEl.value),
+        waist: toNumberOrEmpty(waistEl.value),
+        hip: toNumberOrEmpty(hipEl.value),
+        abdomen: toNumberOrEmpty(abdomenEl.value),
+        createdAt: Date.now()
+      };
+
+      const records = getWeeklyRecords();
+      const existingIndex = records.findIndex((r) => r.date === date);
+
+      // 同一天的周记录进行覆盖，保证每周一条更清晰
+      if (existingIndex >= 0) {
+        records[existingIndex] = entry;
+      } else {
+        records.push(entry);
+      }
+
+      setWeeklyRecords(records);
+      renderWeeklyTable();
+
+      const oldText = addMeasureBtn.textContent;
+      addMeasureBtn.textContent = "已添加";
+      window.setTimeout(() => {
+        addMeasureBtn.textContent = oldText;
+      }, 1200);
+
+      showToast("每周数据已保存");
+    }
+
+    addMeasureBtn.addEventListener("click", addWeeklyMeasurement);
+
+    // -----------------------------
+    // 初始化
+    // -----------------------------
+    function init() {
+      const today = getTodayString();
+      dailyDateEl.value = today;
+      measureDateEl.value = today;
+      loadDailyByDate(today);
+      renderWeeklyTable();
+    }
+
+    init();
+  </script>
+</body>
+</html>
