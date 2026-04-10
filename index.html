@@ -3,22 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>通用版健康与身材管理</title>
+  <meta name="color-scheme" content="dark" />
+  <title>每日一瘦 · 健康与身材记事</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;600&family=Noto+Serif+SC:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
   <style>
+    /* INTJ 气质：深色基底、结构网格、衬线标题、等宽数据、低饱和金作唯一强调色 */
+
     :root {
-      --bg: #f4f8fb;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --primary: #2f7cf6;
-      --primary-soft: #dce9ff;
-      --border: #e6edf5;
-      --success: #16a34a;
-      --danger: #ef4444;
-      --shadow: 0 12px 30px rgba(31, 41, 55, 0.08);
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --radius-sm: 10px;
+      --bg-0: #0a0c0f;
+      --bg-1: #12161c;
+      --card: rgba(18, 22, 28, 0.78);
+      --card-edge: rgba(201, 169, 98, 0.14);
+      --text: #e6e8ec;
+      --muted: #8b919b;
+      --accent: #c9a962;
+      --accent-dim: rgba(201, 169, 98, 0.12);
+      --line: rgba(255, 255, 255, 0.06);
+      --input-bg: rgba(8, 10, 14, 0.65);
+      --shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+      --radius-lg: 14px;
+      --radius-md: 8px;
+      --radius-sm: 6px;
+      --font-serif: "Noto Serif SC", "Songti SC", serif;
+      --font-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --font-mono: "JetBrains Mono", "Consolas", monospace;
     }
 
     * {
@@ -27,63 +40,172 @@
       padding: 0;
     }
 
+    html {
+      color-scheme: dark;
+    }
+
     body {
-      font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(180deg, #f7fbff 0%, var(--bg) 45%);
+      font-family: var(--font-sans);
+      font-weight: 400;
+      background-color: var(--bg-0);
       color: var(--text);
       min-height: 100vh;
-      padding: 20px;
+      padding: 22px 18px 40px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* 背景：极淡坐标网格 + 径向光晕，营造「图纸」感 */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201, 169, 98, 0.07), transparent 55%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 62%);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.35;
+      mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, #000 25%, transparent 75%);
     }
 
     .container {
-      max-width: 1100px;
+      max-width: 1080px;
       margin: 0 auto;
+      position: relative;
+      z-index: 1;
     }
 
     .app-header {
-      margin-bottom: 18px;
+      margin-bottom: 26px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand-line {
+      width: 48px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      margin-bottom: 14px;
+    }
+
+    .app-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.9;
+      margin-bottom: 10px;
     }
 
     .app-title {
-      font-size: clamp(1.4rem, 2.6vw, 2rem);
-      font-weight: 700;
-      letter-spacing: 0.2px;
-      margin-bottom: 6px;
+      font-family: var(--font-serif);
+      font-size: clamp(1.75rem, 4.2vw, 2.35rem);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+      line-height: 1.2;
     }
 
     .app-subtitle {
       color: var(--muted);
-      font-size: 0.95rem;
+      font-size: 0.92rem;
+      font-weight: 300;
+      max-width: 36em;
+      line-height: 1.65;
     }
 
     .layout {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 16px;
+      gap: 20px;
     }
 
     .card {
       background: var(--card);
       border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
+      border: 1px solid var(--card-edge);
       box-shadow: var(--shadow);
-      padding: 18px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 22px;
+      position: relative;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 24px;
+      right: 24px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-dim), transparent);
+      opacity: 0.9;
+    }
+
+    .card-head {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+
+    .card-index {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--accent);
+      border: 1px solid var(--card-edge);
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+      background: var(--accent-dim);
     }
 
     .card-title {
-      font-size: 1.1rem;
-      font-weight: 700;
+      font-family: var(--font-serif);
+      font-size: 1.08rem;
+      font-weight: 600;
       margin-bottom: 4px;
+      letter-spacing: 0.02em;
+    }
+
+    .card-en {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-left: 6px;
     }
 
     .card-desc {
       color: var(--muted);
-      font-size: 0.9rem;
-      margin-bottom: 14px;
+      font-size: 0.88rem;
+      font-weight: 300;
+      line-height: 1.55;
     }
 
     .section {
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     .section:last-of-type {
@@ -92,21 +214,27 @@
 
     .section-label {
       display: block;
-      font-size: 0.92rem;
-      font-weight: 600;
+      font-size: 0.8rem;
+      font-weight: 500;
       margin-bottom: 8px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
     }
 
     .grid-three {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 10px;
+      gap: 12px;
     }
 
     .grid-four {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 10px;
+      gap: 12px;
+    }
+
+    .section--spaced {
+      margin-top: 16px;
     }
 
     input,
@@ -118,72 +246,87 @@
     .input,
     .textarea {
       width: 100%;
-      border: 1px solid var(--border);
-      background: #fcfdff;
+      border: 1px solid var(--line);
+      background: var(--input-bg);
       border-radius: var(--radius-sm);
-      padding: 11px 12px;
+      padding: 11px 13px;
+      color: var(--text);
       transition: border-color 0.2s, box-shadow 0.2s;
       outline: none;
     }
 
+    .input::placeholder,
+    .textarea::placeholder {
+      color: rgba(139, 145, 155, 0.65);
+    }
+
     .input:focus,
     .textarea:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(47, 124, 246, 0.12);
+      border-color: rgba(201, 169, 98, 0.45);
+      box-shadow: 0 0 0 1px rgba(201, 169, 98, 0.2);
     }
 
     .textarea {
-      min-height: 92px;
+      min-height: 96px;
       resize: vertical;
     }
 
     .water-counter {
       display: inline-flex;
-      align-items: center;
-      border: 1px solid var(--border);
-      border-radius: 999px;
+      align-items: stretch;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
       overflow: hidden;
-      background: #f8fbff;
+      background: var(--input-bg);
     }
 
     .counter-btn {
-      width: 40px;
-      height: 40px;
+      width: 44px;
       border: none;
       background: transparent;
-      font-size: 1.2rem;
-      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      color: var(--accent);
       cursor: pointer;
       transition: background 0.2s;
     }
 
     .counter-btn:hover {
-      background: var(--primary-soft);
+      background: var(--accent-dim);
     }
 
     .counter-value {
-      min-width: 96px;
-      text-align: center;
-      font-weight: 700;
-      color: var(--primary);
-      font-size: 1rem;
-      padding: 0 10px;
+      min-width: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 500;
+      color: var(--text);
+      font-size: 0.95rem;
+      padding: 0 12px;
+      border-left: 1px solid var(--line);
+      border-right: 1px solid var(--line);
     }
 
     .actions {
-      margin-top: 14px;
+      margin-top: 18px;
       display: flex;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
     .btn {
-      border: none;
+      border: 1px solid var(--card-edge);
       border-radius: var(--radius-md);
-      padding: 10px 16px;
+      padding: 11px 20px;
       cursor: pointer;
-      transition: transform 0.06s, opacity 0.2s, box-shadow 0.2s;
-      font-weight: 600;
+      transition: transform 0.06s, background 0.2s, border-color 0.2s;
+      font-weight: 500;
+      font-size: 0.88rem;
+      letter-spacing: 0.06em;
+      background: transparent;
+      color: var(--text);
     }
 
     .btn:active {
@@ -191,92 +334,120 @@
     }
 
     .btn-primary {
-      background: var(--primary);
-      color: #fff;
-      box-shadow: 0 8px 20px rgba(47, 124, 246, 0.25);
+      background: linear-gradient(145deg, rgba(201, 169, 98, 0.22), rgba(201, 169, 98, 0.08));
+      border-color: rgba(201, 169, 98, 0.35);
+      color: #f0e6d4;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
     }
 
     .btn-primary:hover {
-      opacity: 0.95;
+      border-color: rgba(201, 169, 98, 0.55);
+      background: linear-gradient(145deg, rgba(201, 169, 98, 0.3), rgba(201, 169, 98, 0.1));
     }
 
     .date-row {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 14px;
+      gap: 12px;
+      margin-bottom: 16px;
       flex-wrap: wrap;
     }
 
     .date-row label {
       color: var(--muted);
-      font-size: 0.92rem;
-      font-weight: 600;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
     }
 
     .tip {
-      margin-top: 8px;
-      font-size: 0.88rem;
-      color: #0f766e;
-      background: #e6fffa;
-      border: 1px solid #c5f3ea;
-      border-radius: var(--radius-sm);
-      padding: 8px 10px;
+      margin-top: 4px;
+      margin-bottom: 4px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      border-left: 2px solid var(--accent);
+      padding: 10px 12px;
+      background: rgba(201, 169, 98, 0.06);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      line-height: 1.55;
+      font-weight: 300;
     }
 
     .table-wrap {
       overflow-x: auto;
-      border: 1px solid var(--border);
+      border: 1px solid var(--line);
       border-radius: var(--radius-md);
-      margin-top: 12px;
+      margin-top: 16px;
+      background: var(--input-bg);
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 640px;
-      background: #fff;
+      min-width: 720px;
     }
 
     th,
     td {
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
       text-align: center;
-      font-size: 0.9rem;
+      font-size: 0.82rem;
     }
 
     th {
-      background: #f7fbff;
-      font-weight: 700;
-      color: #374151;
+      font-family: var(--font-sans);
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      background: rgba(201, 169, 98, 0.05);
+    }
+
+    td {
+      font-family: var(--font-mono);
+      color: var(--text);
+    }
+
+    td:first-child {
+      font-family: var(--font-mono);
+      color: var(--accent);
+      opacity: 0.95;
     }
 
     tr:last-child td {
       border-bottom: none;
     }
 
+    tr:hover td {
+      background: rgba(201, 169, 98, 0.04);
+    }
+
     .empty {
       text-align: center;
       color: var(--muted);
-      padding: 14px 10px;
-      font-size: 0.9rem;
+      padding: 18px 12px;
+      font-size: 0.88rem;
+      font-family: var(--font-sans);
     }
 
     .toast {
       position: fixed;
       left: 50%;
-      bottom: 24px;
-      transform: translateX(-50%) translateY(18px);
+      bottom: 28px;
+      transform: translateX(-50%) translateY(16px);
       opacity: 0;
       pointer-events: none;
-      background: rgba(17, 24, 39, 0.92);
-      color: #fff;
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-size: 0.88rem;
-      transition: opacity 0.25s, transform 0.25s;
+      background: rgba(18, 22, 28, 0.95);
+      color: var(--text);
+      padding: 11px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      font-family: var(--font-mono);
+      letter-spacing: 0.04em;
+      border: 1px solid var(--card-edge);
+      transition: opacity 0.28s, transform 0.28s;
       z-index: 99;
+      box-shadow: var(--shadow);
     }
 
     .toast.show {
@@ -286,12 +457,13 @@
 
     @media (min-width: 860px) {
       body {
-        padding: 26px;
+        padding: 32px 28px 48px;
       }
 
       .layout {
-        grid-template-columns: 1.1fr 1fr;
-        gap: 18px;
+        grid-template-columns: 1.05fr 1fr;
+        gap: 22px;
+        align-items: start;
       }
 
       .grid-three {
@@ -307,15 +479,24 @@
 <body>
   <div class="container">
     <header class="app-header">
-      <h1 class="app-title">通用版健康与身材管理</h1>
-      <p class="app-subtitle">每日习惯打卡 + 每周身材数据追踪（本地保存）</p>
+      <div class="brand-line" aria-hidden="true"></div>
+      <p class="app-eyebrow">Local only · 数据不离设备</p>
+      <h1 class="app-title">每日一瘦</h1>
+      <p class="app-subtitle">
+        以日为单位梳理饮食、饮水与运动；以周为粒度采集围度与体重。界面为私密记录而设计——克制、清晰、可长期留存。
+      </p>
     </header>
 
     <main class="layout">
       <!-- 模块一：每日习惯打卡 -->
-      <section class="card">
-        <h2 class="card-title">模块一：每日习惯打卡（Daily Tracker）</h2>
-        <p class="card-desc">按日期记录当天饮食、饮水和运动内容。</p>
+      <section class="card" aria-labelledby="daily-title">
+        <div class="card-head">
+          <span class="card-index" aria-hidden="true">I</span>
+          <div>
+            <h2 id="daily-title" class="card-title">日课流水<span class="card-en">Daily</span></h2>
+            <p class="card-desc">选定日期后填写，保存即写入本地；切换日期可检索历史日课。</p>
+          </div>
+        </div>
 
         <div class="date-row">
           <label for="dailyDate">记录日期</label>
@@ -354,12 +535,17 @@
       </section>
 
       <!-- 模块二：每周身材数据追踪 -->
-      <section class="card">
-        <h2 class="card-title">模块二：每周身材数据追踪（Weekly Measurements）</h2>
-        <p class="card-desc">建议每周记录一次，方便观察趋势变化。</p>
-        <p class="tip">提示：围度和体重建议固定每周同一时间记录，便于横向对比。</p>
+      <section class="card" aria-labelledby="weekly-title">
+        <div class="card-head">
+          <span class="card-index" aria-hidden="true">II</span>
+          <div>
+            <h2 id="weekly-title" class="card-title">围度索引<span class="card-en">Weekly</span></h2>
+            <p class="card-desc">建议每周固定相同时段测量一次，降低偶然波动带来的误判。</p>
+          </div>
+        </div>
+        <p class="tip">同一日期的记录会被覆盖为最新一条，便于你把「本周正式数据」一次性敲定。</p>
 
-        <div class="section" style="margin-top: 14px;">
+        <div class="section section--spaced">
           <div class="grid-four">
             <div>
               <label class="section-label" for="measureDate">日期</label>
