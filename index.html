@@ -271,6 +271,10 @@
       resize: vertical;
     }
 
+    .textarea--compact {
+      min-height: 76px;
+    }
+
     .water-counter {
       display: inline-flex;
       align-items: stretch;
@@ -455,6 +459,248 @@
       transform: translateX(-50%) translateY(0);
     }
 
+    /* 模块三：军令状 — 轻度游戏化 HUD，仍保持深色金线体系 */
+
+    .card--quest {
+      position: relative;
+    }
+
+    .quest-hud {
+      display: grid;
+      gap: 18px;
+      margin-bottom: 20px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--input-bg);
+    }
+
+    .quest-hud-main {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .quest-ring-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .quest-ring {
+      width: 118px;
+      height: 118px;
+      border-radius: 50%;
+      background: conic-gradient(
+        var(--accent) calc(var(--quest-progress, 0) * 1turn),
+        rgba(255, 255, 255, 0.05) 0
+      );
+      box-shadow: 0 0 0 1px var(--line), inset 0 0 24px rgba(0, 0, 0, 0.35);
+      animation: quest-ring-breathe 4.5s ease-in-out infinite;
+    }
+
+    .card--quest-verdict-win .quest-ring {
+      animation: quest-ring-clear 1.2s ease-out forwards;
+    }
+
+    @keyframes quest-ring-breathe {
+      0%,
+      100% {
+        filter: drop-shadow(0 0 0 transparent);
+      }
+      50% {
+        filter: drop-shadow(0 0 12px rgba(201, 169, 98, 0.12));
+      }
+    }
+
+    @keyframes quest-ring-clear {
+      0% {
+        filter: drop-shadow(0 0 0 transparent);
+      }
+      100% {
+        filter: drop-shadow(0 0 14px rgba(201, 169, 98, 0.35));
+      }
+    }
+
+    .quest-ring-inner {
+      position: absolute;
+      inset: 11px;
+      border-radius: 50%;
+      background: var(--bg-0);
+      border: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6px;
+    }
+
+    .quest-ring-label {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .quest-ring-value {
+      font-family: var(--font-mono);
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-top: 2px;
+      line-height: 1.2;
+    }
+
+    .quest-ring-sub {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .quest-meta {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .quest-badge {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .quest-status-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .quest-pill {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      letter-spacing: 0.06em;
+    }
+
+    .quest-pill--active {
+      border-color: rgba(201, 169, 98, 0.4);
+      background: var(--accent-dim);
+      color: #f0e6d4;
+    }
+
+    .quest-pill--pending {
+      border-color: rgba(139, 145, 155, 0.45);
+      color: var(--muted);
+    }
+
+    .quest-pill--win {
+      border-color: rgba(201, 169, 98, 0.55);
+      background: rgba(201, 169, 98, 0.14);
+      color: #f5ecd8;
+    }
+
+    .quest-pill--lose {
+      border-color: rgba(220, 90, 90, 0.45);
+      color: #f0c4c4;
+      background: rgba(220, 90, 90, 0.08);
+    }
+
+    .quest-lines {
+      font-size: 0.84rem;
+      color: var(--muted);
+      font-weight: 300;
+      line-height: 1.65;
+    }
+
+    .quest-lines strong {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .quest-duel {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .quest-panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      background: rgba(8, 10, 14, 0.4);
+    }
+
+    .quest-panel-head {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .quest-panel--stake .quest-panel-head {
+      color: rgba(240, 196, 196, 0.85);
+    }
+
+    .quest-panel--loot .quest-panel-head {
+      color: rgba(201, 169, 98, 0.9);
+    }
+
+    .quest-panel-body {
+      font-size: 0.86rem;
+      color: var(--text);
+      line-height: 1.55;
+      font-weight: 300;
+      white-space: pre-wrap;
+    }
+
+    .quest-panel-body--empty {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .quest-panel--stake-highlight {
+      border-color: rgba(220, 90, 90, 0.55);
+      box-shadow: 0 0 0 1px rgba(220, 90, 90, 0.12);
+    }
+
+    .quest-panel--loot-highlight {
+      border-color: rgba(201, 169, 98, 0.55);
+      box-shadow: 0 0 0 1px rgba(201, 169, 98, 0.15);
+    }
+
+    .quest-form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .quest-form-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .btn--ghost {
+      border-color: var(--line);
+      color: var(--muted);
+    }
+
+    .btn--ghost:hover {
+      border-color: rgba(139, 145, 155, 0.45);
+      color: var(--text);
+    }
+
     @media (min-width: 860px) {
       body {
         padding: 32px 28px 48px;
@@ -466,12 +712,24 @@
         align-items: start;
       }
 
+      .card--quest {
+        grid-column: 1 / -1;
+      }
+
       .grid-three {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       .grid-four {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .quest-form-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .quest-duel {
+        grid-template-columns: 1fr 1fr;
       }
     }
   </style>
@@ -594,6 +852,53 @@
           </table>
         </div>
       </section>
+
+      <!-- 模块三：军令状（目标日 + 目标体重 + 奖惩） -->
+      <section class="card card--quest" id="flagCard" aria-labelledby="flag-title">
+        <div class="card-head">
+          <span class="card-index" aria-hidden="true">III</span>
+          <div>
+            <h2 id="flag-title" class="card-title">军令状<span class="card-en">Flag</span></h2>
+            <p class="card-desc">
+              立下截止日与目标体重，并写下奖惩。进度环表示「立约日 → 截止日」的时间推进；到期后按围度索引里「截止日及之前」最近一次体重自动判定通关与否。
+            </p>
+          </div>
+        </div>
+
+        <div class="quest-hud" id="flagHud" aria-live="polite"></div>
+
+        <div class="quest-form-grid">
+          <div class="quest-form-row">
+            <div class="section">
+              <label class="section-label" for="flagDeadline">截止日</label>
+              <input id="flagDeadline" class="input" type="date" />
+            </div>
+            <div class="section">
+              <label class="section-label" for="flagTarget">目标体重（kg）</label>
+              <input id="flagTarget" class="input" type="number" step="0.1" min="0" placeholder="如 52.0" />
+            </div>
+          </div>
+          <div class="section">
+            <label class="section-label" for="flagPenalty">未达成则…</label>
+            <textarea
+              id="flagPenalty"
+              class="textarea textarea--compact"
+              placeholder="例如：给闺蜜发 200 字检讨 + 承包一周奶茶"></textarea>
+          </div>
+          <div class="section">
+            <label class="section-label" for="flagReward">达成则…</label>
+            <textarea
+              id="flagReward"
+              class="textarea textarea--compact"
+              placeholder="例如：下单那件犹豫很久的外套"></textarea>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="flagSaveBtn" class="btn btn-primary" type="button">保存军令状</button>
+          <button id="flagClearBtn" class="btn btn--ghost" type="button">清除并重立</button>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -605,7 +910,8 @@
     // -----------------------------
     const STORAGE_KEYS = {
       daily: "health_app_daily_records",
-      weekly: "health_app_weekly_measurements"
+      weekly: "health_app_weekly_measurements",
+      flag: "health_app_weight_flag"
     };
 
     function getTodayString() {
@@ -632,6 +938,36 @@
       } catch (e) {
         return fallback;
       }
+    }
+
+    /** 避免把用户输入拼进 innerHTML 时产生 XSS */
+    function escapeHtml(str) {
+      if (str == null) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    /** 解析 YYYY-MM-DD 为本地日历日（规避时区偏移） */
+    function parseYMD(dateStr) {
+      const parts = dateStr.split("-");
+      const y = Number(parts[0]);
+      const m = Number(parts[1]);
+      const d = Number(parts[2]);
+      return new Date(y, m - 1, d);
+    }
+
+    /** 两个日期字符串之间的整天数（可正可负） */
+    function daysBetween(startStr, endStr) {
+      const a = parseYMD(startStr).getTime();
+      const b = parseYMD(endStr).getTime();
+      return Math.round((b - a) / 86400000);
+    }
+
+    function clamp(n, min, max) {
+      return Math.min(max, Math.max(min, n));
     }
 
     // -----------------------------
@@ -806,6 +1142,7 @@
 
       setWeeklyRecords(records);
       renderWeeklyTable();
+      renderFlagHud();
 
       const oldText = addMeasureBtn.textContent;
       addMeasureBtn.textContent = "已添加";
@@ -819,6 +1156,301 @@
     addMeasureBtn.addEventListener("click", addWeeklyMeasurement);
 
     // -----------------------------
+    // 模块三：军令状（Flag）
+    // -----------------------------
+    const flagCard = document.getElementById("flagCard");
+    const flagHud = document.getElementById("flagHud");
+    const flagDeadlineEl = document.getElementById("flagDeadline");
+    const flagTargetEl = document.getElementById("flagTarget");
+    const flagPenaltyEl = document.getElementById("flagPenalty");
+    const flagRewardEl = document.getElementById("flagReward");
+    const flagSaveBtn = document.getElementById("flagSaveBtn");
+    const flagClearBtn = document.getElementById("flagClearBtn");
+
+    function getFlagRecord() {
+      const raw = localStorage.getItem(STORAGE_KEYS.flag);
+      return parseJSONSafe(raw, null);
+    }
+
+    function setFlagRecord(data) {
+      if (data == null) {
+        localStorage.removeItem(STORAGE_KEYS.flag);
+        return;
+      }
+      localStorage.setItem(STORAGE_KEYS.flag, JSON.stringify(data));
+    }
+
+    /** 截止日及之前，按日期最近的一条有效体重 */
+    function getWeightOnOrBefore(deadlineStr, records) {
+      const valid = records.filter(function (r) {
+        if (!r.date || r.date > deadlineStr) return false;
+        const w = r.weight;
+        return w !== "" && w != null && Number.isFinite(Number(w));
+      });
+      if (valid.length === 0) return null;
+      valid.sort(function (a, b) {
+        return a.date.localeCompare(b.date);
+      });
+      const last = valid[valid.length - 1];
+      return Number(last.weight);
+    }
+
+    /** 全库最近一次有体重的记录 */
+    function getLatestWeight(records) {
+      const valid = records.filter(function (r) {
+        const w = r.weight;
+        return w !== "" && w != null && Number.isFinite(Number(w));
+      });
+      if (valid.length === 0) return null;
+      valid.sort(function (a, b) {
+        return a.date.localeCompare(b.date);
+      });
+      const last = valid[valid.length - 1];
+      return { weight: Number(last.weight), date: last.date };
+    }
+
+    function loadFlagToForm() {
+      const rec = getFlagRecord();
+      if (!rec) {
+        flagDeadlineEl.value = "";
+        flagTargetEl.value = "";
+        flagPenaltyEl.value = "";
+        flagRewardEl.value = "";
+        return;
+      }
+      flagDeadlineEl.value = rec.deadline || "";
+      flagTargetEl.value = rec.targetKg != null && rec.targetKg !== "" ? rec.targetKg : "";
+      flagPenaltyEl.value = rec.penalty || "";
+      flagRewardEl.value = rec.reward || "";
+    }
+
+    function renderFlagHud() {
+      flagCard.classList.remove("card--quest-verdict-win");
+      const rec = getFlagRecord();
+      const today = getTodayString();
+      const weekly = getWeeklyRecords();
+
+      if (!rec || !rec.deadline || rec.targetKg === "" || rec.targetKg == null) {
+        flagHud.innerHTML =
+          '<div class="quest-hud-main">' +
+          '<div class="quest-ring-wrap" style="--quest-progress:0">' +
+          '<div class="quest-ring"></div>' +
+          '<div class="quest-ring-inner">' +
+          '<span class="quest-ring-label">quest</span>' +
+          '<span class="quest-ring-value">—</span>' +
+          '<span class="quest-ring-sub">未立约</span>' +
+          "</div></div>" +
+          '<div class="quest-meta">' +
+          '<div class="quest-badge">[ MAIN · IDLE ]</div>' +
+          '<div class="quest-lines">填写下方截止日、目标体重与奖惩条款，点击<strong>保存军令状</strong>以激活任务。</div>' +
+          "</div></div>";
+        return;
+      }
+
+      const targetKg = Number(rec.targetKg);
+      const pledgedAt = rec.pledgedAt || rec.deadline;
+      const totalDays = daysBetween(pledgedAt, rec.deadline);
+      const elapsed = daysBetween(pledgedAt, today);
+      let timeProgress = 1;
+      if (totalDays > 0) {
+        timeProgress = clamp(elapsed / totalDays, 0, 1);
+      } else if (totalDays < 0) {
+        timeProgress = 0;
+      }
+
+      const daysLeft = daysBetween(today, rec.deadline);
+      const isPast = today > rec.deadline;
+      const judgmentW = getWeightOnOrBefore(rec.deadline, weekly);
+      const latest = getLatestWeight(weekly);
+      const tol = 0.05;
+
+      let pillClass = "quest-pill quest-pill--active";
+      let pillText = "[ 进行中 · ACTIVE ]";
+      let ringMain = "D-" + Math.max(0, daysLeft);
+      let ringSub = "距截止日";
+      let metaHtml = "";
+
+      if (isPast) {
+        ringMain = "END";
+        ringSub = "已到期";
+        if (judgmentW == null) {
+          pillClass = "quest-pill quest-pill--pending";
+          pillText = "[ 待结算 · PENDING ]";
+          metaHtml =
+            "<p class=\"quest-lines\">截止日已到，但<strong>围度索引</strong>中尚无「" +
+            escapeHtml(rec.deadline) +
+            "」及之前的体重。请补录后刷新本页，或自行对照奖惩执行。</p>";
+        } else if (judgmentW <= targetKg + tol) {
+          pillClass = "quest-pill quest-pill--win";
+          pillText = "[ 通关 · CLEAR ]";
+          flagCard.classList.add("card--quest-verdict-win");
+          metaHtml =
+            "<p class=\"quest-lines\">判定体重 <strong>" +
+            judgmentW +
+            " kg</strong>（截止前最近档案），目标 <strong>" +
+            targetKg +
+            " kg</strong>。条款生效：<strong>达成则…</strong></p>";
+        } else {
+          pillClass = "quest-pill quest-pill--lose";
+          pillText = "[ 失守 · FAIL ]";
+          metaHtml =
+            "<p class=\"quest-lines\">判定体重 <strong>" +
+            judgmentW +
+            " kg</strong>，未达目标 <strong>" +
+            targetKg +
+            " kg</strong>。条款生效：<strong>未达成则…</strong></p>";
+        }
+      } else {
+        if (latest) {
+          const diff = latest.weight - targetKg;
+          if (diff > tol) {
+            metaHtml +=
+              "<p class=\"quest-lines\">当前参考体重 <strong>" +
+              latest.weight +
+              " kg</strong>（" +
+              escapeHtml(latest.date) +
+              "），距离目标还差 <strong>" +
+              diff.toFixed(1) +
+              " kg</strong>。</p>";
+          } else {
+            metaHtml +=
+              "<p class=\"quest-lines\">当前参考体重 <strong>" +
+              latest.weight +
+              " kg</strong>，已达到或优于目标线——保持到截止日即稳。</p>";
+          }
+        } else {
+          metaHtml +=
+            '<p class="quest-lines">尚未在<strong>围度索引</strong>中记录体重；建议先建档，便于任务面板显示参考进度。</p>';
+        }
+        metaHtml +=
+          "<p class=\"quest-lines\">立约日 <strong>" +
+          escapeHtml(pledgedAt) +
+          "</strong> → 截止日 <strong>" +
+          escapeHtml(rec.deadline) +
+          "</strong>，周期共 <strong>" +
+          Math.max(0, totalDays) +
+          "</strong> 天。</p>";
+      }
+
+      const penalty = (rec.penalty || "").trim();
+      const reward = (rec.reward || "").trim();
+      const penaltyBody = penalty
+        ? escapeHtml(penalty)
+        : '<span class="quest-panel-body--empty">（未填写惩罚条款）</span>';
+      const rewardBody = reward
+        ? escapeHtml(reward)
+        : '<span class="quest-panel-body--empty">（未填写奖励条款）</span>';
+
+      let stakeExtra = "";
+      let lootExtra = "";
+      if (isPast && judgmentW != null) {
+        if (judgmentW <= targetKg + tol) lootExtra = " quest-panel--loot-highlight";
+        else stakeExtra = " quest-panel--stake-highlight";
+      }
+
+      flagHud.innerHTML =
+        '<div class="quest-hud-main">' +
+        '<div class="quest-ring-wrap" style="--quest-progress:' +
+        timeProgress +
+        '">' +
+        '<div class="quest-ring"></div>' +
+        '<div class="quest-ring-inner">' +
+        '<span class="quest-ring-label">timeline</span>' +
+        '<span class="quest-ring-value">' +
+        escapeHtml(ringMain) +
+        "</span>" +
+        '<span class="quest-ring-sub">' +
+        escapeHtml(ringSub) +
+        "</span>" +
+        "</div></div>" +
+        '<div class="quest-meta">' +
+        '<div class="quest-badge">[ MAIN · WEIGHT QUEST ]</div>' +
+        '<div class="quest-status-row">' +
+        '<span class="' +
+        pillClass +
+        '">' +
+        pillText +
+        "</span>" +
+        '<span class="quest-lines" style="margin:0">目标 <strong>' +
+        targetKg +
+        " kg</strong> · 截止 <strong>" +
+        escapeHtml(rec.deadline) +
+        "</strong></span></div>" +
+        metaHtml +
+        "</div></div>" +
+        '<div class="quest-duel">' +
+        '<div class="quest-panel quest-panel--stake' +
+        stakeExtra +
+        '">' +
+        '<div class="quest-panel-head">[ PENALTY · 未达成 ]</div>' +
+        '<div class="quest-panel-body">' +
+        penaltyBody +
+        "</div></div>" +
+        '<div class="quest-panel quest-panel--loot' +
+        lootExtra +
+        '">' +
+        '<div class="quest-panel-head">[ REWARD · 达成 ]</div>' +
+        '<div class="quest-panel-body">' +
+        rewardBody +
+        "</div></div></div>";
+    }
+
+    function saveFlag() {
+      const deadline = flagDeadlineEl.value;
+      const targetRaw = flagTargetEl.value;
+      if (!deadline) {
+        showToast("请选择截止日");
+        return;
+      }
+      if (targetRaw === "" || targetRaw == null) {
+        showToast("请填写目标体重");
+        return;
+      }
+      const targetKg = Number(targetRaw);
+      if (!Number.isFinite(targetKg) || targetKg <= 0) {
+        showToast("目标体重需为有效数字");
+        return;
+      }
+
+      const prev = getFlagRecord();
+      const today = getTodayString();
+      // 截止日不变则保留立约日（改截止日视为重新开一局时间线）
+      let pledgedAt = today;
+      if (prev && prev.deadline === deadline) {
+        pledgedAt = prev.pledgedAt || today;
+      }
+
+      setFlagRecord({
+        deadline: deadline,
+        targetKg: targetKg,
+        penalty: flagPenaltyEl.value.trim(),
+        reward: flagRewardEl.value.trim(),
+        pledgedAt: pledgedAt,
+        updatedAt: Date.now()
+      });
+
+      renderFlagHud();
+
+      const oldText = flagSaveBtn.textContent;
+      flagSaveBtn.textContent = "已保存";
+      window.setTimeout(function () {
+        flagSaveBtn.textContent = oldText;
+      }, 1200);
+      showToast("军令状已保存");
+    }
+
+    function clearFlag() {
+      if (!window.confirm("确定清除当前军令状？进度与立约日将重置。")) return;
+      setFlagRecord(null);
+      loadFlagToForm();
+      renderFlagHud();
+      showToast("已清除军令状");
+    }
+
+    flagSaveBtn.addEventListener("click", saveFlag);
+    flagClearBtn.addEventListener("click", clearFlag);
+
+    // -----------------------------
     // 初始化
     // -----------------------------
     function init() {
@@ -827,6 +1459,8 @@
       measureDateEl.value = today;
       loadDailyByDate(today);
       renderWeeklyTable();
+      loadFlagToForm();
+      renderFlagHud();
     }
 
     init();
