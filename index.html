@@ -32,6 +32,8 @@
       --font-serif: "Noto Serif SC", "Songti SC", serif;
       --font-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
       --font-mono: "JetBrains Mono", "Consolas", monospace;
+      /* 底部 Tab 导航占位（避免内容被遮挡） */
+      --bottom-nav-h: 56px;
     }
 
     * {
@@ -50,7 +52,8 @@
       background-color: var(--bg-0);
       color: var(--text);
       min-height: 100vh;
-      padding: 22px 18px 40px;
+      min-height: 100dvh;
+      padding: 22px 18px calc(20px + var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
       position: relative;
       overflow-x: hidden;
     }
@@ -128,10 +131,17 @@
       line-height: 1.65;
     }
 
-    .layout {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
+    /* 单页 Tab：同一时间只展示一个模块 */
+    .tab-main {
+      display: block;
+    }
+
+    .tab-view {
+      display: none;
+    }
+
+    .tab-view--active {
+      display: block;
     }
 
     .card {
@@ -437,7 +447,7 @@
     .toast {
       position: fixed;
       left: 50%;
-      bottom: 28px;
+      bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + 20px);
       transform: translateX(-50%) translateY(16px);
       opacity: 0;
       pointer-events: none;
@@ -450,7 +460,7 @@
       letter-spacing: 0.04em;
       border: 1px solid var(--card-edge);
       transition: opacity 0.28s, transform 0.28s;
-      z-index: 99;
+      z-index: 110;
       box-shadow: var(--shadow);
     }
 
@@ -701,19 +711,75 @@
       color: var(--text);
     }
 
+    /* 底部固定导航栏 */
+    .bottom-nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 100;
+      display: flex;
+      align-items: stretch;
+      justify-content: space-around;
+      min-height: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
+      padding: 0 6px env(safe-area-inset-bottom, 0px);
+      background: rgba(10, 12, 15, 0.86);
+      border-top: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.35);
+    }
+
+    .bottom-nav__item {
+      flex: 1;
+      max-width: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 8px 6px;
+      margin: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--muted);
+      font-family: var(--font-sans);
+      -webkit-tap-highlight-color: transparent;
+      transition: color 0.2s, transform 0.15s;
+    }
+
+    .bottom-nav__item:active {
+      transform: scale(0.97);
+    }
+
+    .bottom-nav__item--active {
+      color: var(--accent);
+    }
+
+    .bottom-nav__emoji {
+      font-size: 1.28rem;
+      line-height: 1;
+      transition: transform 0.22s ease;
+      filter: grayscale(0.35);
+      opacity: 0.82;
+    }
+
+    .bottom-nav__item--active .bottom-nav__emoji {
+      transform: scale(1.2);
+      filter: grayscale(0);
+      opacity: 1;
+    }
+
+    .bottom-nav__label {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+    }
+
     @media (min-width: 860px) {
       body {
-        padding: 32px 28px 48px;
-      }
-
-      .layout {
-        grid-template-columns: 1.05fr 1fr;
-        gap: 22px;
-        align-items: start;
-      }
-
-      .card--quest {
-        grid-column: 1 / -1;
+        padding: 32px 28px calc(28px + var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
       }
 
       .grid-three {
@@ -745,8 +811,15 @@
       </p>
     </header>
 
-    <main class="layout">
-      <!-- 模块一：每日习惯打卡 -->
+    <main class="tab-main">
+      <!-- Tab 面板一：日课流水 -->
+      <div
+        id="view-daily"
+        class="tab-view tab-view--active"
+        role="tabpanel"
+        aria-labelledby="tab-btn-daily"
+        aria-hidden="false"
+      >
       <section class="card" aria-labelledby="daily-title">
         <div class="card-head">
           <span class="card-index" aria-hidden="true">I</span>
@@ -791,8 +864,16 @@
           <button id="saveDailyBtn" class="btn btn-primary" type="button">保存今日记录</button>
         </div>
       </section>
+      </div>
 
-      <!-- 模块二：每周身材数据追踪 -->
+      <!-- Tab 面板二：围度索引 -->
+      <div
+        id="view-weekly"
+        class="tab-view"
+        role="tabpanel"
+        aria-labelledby="tab-btn-weekly"
+        aria-hidden="true"
+      >
       <section class="card" aria-labelledby="weekly-title">
         <div class="card-head">
           <span class="card-index" aria-hidden="true">II</span>
@@ -852,8 +933,16 @@
           </table>
         </div>
       </section>
+      </div>
 
-      <!-- 模块三：军令状（目标日 + 目标体重 + 奖惩） -->
+      <!-- Tab 面板三：军令状 -->
+      <div
+        id="view-flag"
+        class="tab-view"
+        role="tabpanel"
+        aria-labelledby="tab-btn-flag"
+        aria-hidden="true"
+      >
       <section class="card card--quest" id="flagCard" aria-labelledby="flag-title">
         <div class="card-head">
           <span class="card-index" aria-hidden="true">III</span>
@@ -899,8 +988,48 @@
           <button id="flagClearBtn" class="btn btn--ghost" type="button">清除并重立</button>
         </div>
       </section>
+      </div>
     </main>
   </div>
+
+  <nav class="bottom-nav" role="tablist" aria-label="底部导航">
+    <button
+      type="button"
+      id="tab-btn-daily"
+      class="bottom-nav__item bottom-nav__item--active"
+      role="tab"
+      aria-selected="true"
+      aria-controls="view-daily"
+      data-tab="daily"
+    >
+      <span class="bottom-nav__emoji" aria-hidden="true">📝</span>
+      <span class="bottom-nav__label">日课</span>
+    </button>
+    <button
+      type="button"
+      id="tab-btn-weekly"
+      class="bottom-nav__item"
+      role="tab"
+      aria-selected="false"
+      aria-controls="view-weekly"
+      data-tab="weekly"
+    >
+      <span class="bottom-nav__emoji" aria-hidden="true">📏</span>
+      <span class="bottom-nav__label">围度</span>
+    </button>
+    <button
+      type="button"
+      id="tab-btn-flag"
+      class="bottom-nav__item"
+      role="tab"
+      aria-selected="false"
+      aria-controls="view-flag"
+      data-tab="flag"
+    >
+      <span class="bottom-nav__emoji" aria-hidden="true">🚩</span>
+      <span class="bottom-nav__label">军令</span>
+    </button>
+  </nav>
 
   <div id="toast" class="toast"></div>
 
@@ -969,6 +1098,41 @@
     function clamp(n, min, max) {
       return Math.min(max, Math.max(min, n));
     }
+
+    // -----------------------------
+    // 底部 Tab 切换（仅控制显隐与高亮，不改动 LocalStorage 与业务函数）
+    // -----------------------------
+    const TAB_KEYS = ["daily", "weekly", "flag"];
+    const tabViews = {
+      daily: document.getElementById("view-daily"),
+      weekly: document.getElementById("view-weekly"),
+      flag: document.getElementById("view-flag")
+    };
+    const tabButtons = document.querySelectorAll(".bottom-nav__item[data-tab]");
+
+    function activateTab(tabKey) {
+      if (TAB_KEYS.indexOf(tabKey) === -1) return;
+      TAB_KEYS.forEach(function (key) {
+        var isOn = key === tabKey;
+        var panel = tabViews[key];
+        if (panel) {
+          panel.classList.toggle("tab-view--active", isOn);
+          panel.setAttribute("aria-hidden", isOn ? "false" : "true");
+        }
+      });
+      tabButtons.forEach(function (btn) {
+        var active = btn.getAttribute("data-tab") === tabKey;
+        btn.classList.toggle("bottom-nav__item--active", active);
+        btn.setAttribute("aria-selected", active ? "true" : "false");
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    tabButtons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        activateTab(btn.getAttribute("data-tab"));
+      });
+    });
 
     // -----------------------------
     // 模块一：每日习惯打卡逻辑
