@@ -3,1031 +3,433 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="color-scheme" content="dark" />
-  <title>每日一瘦 · 健康与身材记事</title>
+  <title>每日一瘦</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;600&family=Noto+Serif+SC:wght@500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
     rel="stylesheet"
   />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* INTJ 气质：深色基底、结构网格、衬线标题、等宽数据、低饱和金作唯一强调色 */
-
     :root {
-      --bg-0: #0a0c0f;
-      --bg-1: #12161c;
-      --card: rgba(18, 22, 28, 0.78);
-      --card-edge: rgba(201, 169, 98, 0.14);
-      --text: #e6e8ec;
-      --muted: #8b919b;
-      --accent: #c9a962;
-      --accent-dim: rgba(201, 169, 98, 0.12);
-      --line: rgba(255, 255, 255, 0.06);
-      --input-bg: rgba(8, 10, 14, 0.65);
-      --shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
-      --radius-lg: 14px;
-      --radius-md: 8px;
-      --radius-sm: 6px;
-      --font-serif: "Noto Serif SC", "Songti SC", serif;
-      --font-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-      --font-mono: "JetBrains Mono", "Consolas", monospace;
-      /* 底部 Tab 导航占位（避免内容被遮挡） */
-      --bottom-nav-h: 56px;
+      --bottom-nav-h: 60px;
+      --radius: 16px;
+      --radius-sm: 12px;
+      --shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
+      --font: "Inter", "Noto Sans SC", system-ui, sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --bg-soft: #111b32;
+      --card: #17233e;
+      --border: #23365e;
+      --text: #edf2ff;
+      --muted: #9cb0da;
+      --primary: #7aa2ff;
+      --primary-soft: rgba(122, 162, 255, 0.2);
+      --ok: #37c39f;
+      --info: #65a9ff;
+      --warn: #ff7272;
+      --line: rgba(255, 255, 255, 0.1);
     }
 
-    html {
-      color-scheme: dark;
+    [data-theme="light"] {
+      --bg: #f2f6ff;
+      --bg-soft: #eaf0ff;
+      --card: #ffffff;
+      --border: #dfe7fb;
+      --text: #10203f;
+      --muted: #60739b;
+      --primary: #4d7bff;
+      --primary-soft: rgba(77, 123, 255, 0.16);
+      --ok: #0f9e73;
+      --info: #2c7ff0;
+      --warn: #d94f4f;
+      --line: rgba(16, 32, 63, 0.09);
     }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: var(--font-sans);
-      font-weight: 400;
-      background-color: var(--bg-0);
+      font-family: var(--font);
+      background: linear-gradient(180deg, var(--bg-soft) 0%, var(--bg) 100%);
       color: var(--text);
       min-height: 100vh;
-      min-height: 100dvh;
-      padding: 22px 18px calc(20px + var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
-      position: relative;
-      overflow-x: hidden;
+      padding: 18px 14px calc(var(--bottom-nav-h) + 20px + env(safe-area-inset-bottom, 0px));
+      transition: background 0.28s ease, color 0.28s ease;
     }
-
-    /* 背景：极淡坐标网格 + 径向光晕，营造「图纸」感 */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      background:
-        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201, 169, 98, 0.07), transparent 55%),
-        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 62%);
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      background-image:
-        linear-gradient(var(--line) 1px, transparent 1px),
-        linear-gradient(90deg, var(--line) 1px, transparent 1px);
-      background-size: 48px 48px;
-      opacity: 0.35;
-      mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, #000 25%, transparent 75%);
-    }
-
-    .container {
-      max-width: 1080px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 1;
-    }
+    .container { max-width: 980px; margin: 0 auto; }
 
     .app-header {
-      margin-bottom: 26px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .brand-line {
-      width: 48px;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), transparent);
       margin-bottom: 14px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .title-wrap h1 { font-size: 1.4rem; font-weight: 700; }
+    .title-wrap p { margin-top: 6px; color: var(--muted); font-size: 0.9rem; }
+
+    .theme-toggle {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      font-size: 1.1rem;
     }
 
-    .app-eyebrow {
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--accent);
-      opacity: 0.9;
-      margin-bottom: 10px;
-    }
-
-    .app-title {
-      font-family: var(--font-serif);
-      font-size: clamp(1.75rem, 4.2vw, 2.35rem);
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      margin-bottom: 8px;
-      line-height: 1.2;
-    }
-
-    .app-subtitle {
-      color: var(--muted);
-      font-size: 0.92rem;
-      font-weight: 300;
-      max-width: 36em;
-      line-height: 1.65;
-    }
-
-    /* 单页 Tab：同一时间只展示一个模块 */
-    .tab-main {
-      display: block;
-    }
-
-    .tab-view {
-      display: none;
-    }
-
-    .tab-view--active {
-      display: block;
-    }
+    .tab-main { margin-top: 8px; }
+    .tab-view { display: none; }
+    .tab-view--active { display: block; }
 
     .card {
       background: var(--card);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--card-edge);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      padding: 22px;
-      position: relative;
+      padding: 16px;
+      transition: background 0.28s ease, border-color 0.28s ease;
     }
 
-    .card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 24px;
-      right: 24px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent-dim), transparent);
-      opacity: 0.9;
-    }
+    .card h2 { font-size: 1.04rem; margin-bottom: 6px; }
+    .desc { color: var(--muted); font-size: 0.88rem; margin-bottom: 14px; line-height: 1.55; }
 
-    .card-head {
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      margin-bottom: 18px;
-    }
+    .section { margin-bottom: 14px; }
+    .label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+    .grid-2 { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr; gap: 10px; }
 
-    .card-index {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--accent);
-      border: 1px solid var(--card-edge);
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: var(--radius-sm);
-      flex-shrink: 0;
-      background: var(--accent-dim);
-    }
-
-    .card-title {
-      font-family: var(--font-serif);
-      font-size: 1.08rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-      letter-spacing: 0.02em;
-    }
-
-    .card-en {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      font-weight: 400;
-      color: var(--muted);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-left: 6px;
-    }
-
-    .card-desc {
-      color: var(--muted);
-      font-size: 0.88rem;
-      font-weight: 300;
-      line-height: 1.55;
-    }
-
-    .section {
-      margin-bottom: 16px;
-    }
-
-    .section:last-of-type {
-      margin-bottom: 0;
-    }
-
-    .section-label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 500;
-      margin-bottom: 8px;
-      color: var(--muted);
-      letter-spacing: 0.04em;
-    }
-
-    .grid-three {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-
-    .grid-four {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-
-    .section--spaced {
-      margin-top: 16px;
-    }
-
-    input,
-    textarea,
-    button {
-      font: inherit;
-    }
-
-    .input,
-    .textarea {
+    .input, .textarea {
       width: 100%;
-      border: 1px solid var(--line);
-      background: var(--input-bg);
-      border-radius: var(--radius-sm);
-      padding: 11px 13px;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--card) 78%, transparent);
       color: var(--text);
-      transition: border-color 0.2s, box-shadow 0.2s;
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
       outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-
-    .input::placeholder,
-    .textarea::placeholder {
-      color: rgba(139, 145, 155, 0.65);
+    .input:focus, .textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-soft);
     }
+    .textarea { min-height: 86px; resize: vertical; }
 
-    .input:focus,
-    .textarea:focus {
-      border-color: rgba(201, 169, 98, 0.45);
-      box-shadow: 0 0 0 1px rgba(201, 169, 98, 0.2);
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .btn {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 600;
     }
-
-    .textarea {
-      min-height: 96px;
-      resize: vertical;
-    }
-
-    .textarea--compact {
-      min-height: 76px;
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
     }
 
     .water-counter {
       display: inline-flex;
-      align-items: stretch;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      border-radius: 999px;
       overflow: hidden;
-      background: var(--input-bg);
     }
-
     .counter-btn {
-      width: 44px;
-      border: none;
-      background: transparent;
-      font-family: var(--font-mono);
+      width: 40px; border: none; background: transparent; color: var(--text); cursor: pointer;
       font-size: 1.1rem;
-      color: var(--accent);
-      cursor: pointer;
-      transition: background 0.2s;
     }
-
-    .counter-btn:hover {
-      background: var(--accent-dim);
-    }
-
     .counter-value {
-      min-width: 100px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-mono);
-      font-weight: 500;
-      color: var(--text);
-      font-size: 0.95rem;
-      padding: 0 12px;
-      border-left: 1px solid var(--line);
-      border-right: 1px solid var(--line);
+      min-width: 94px;
+      text-align: center;
+      line-height: 40px;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      font-weight: 700;
+      color: var(--primary);
     }
 
-    .actions {
-      margin-top: 18px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+    .delta-box {
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: color-mix(in srgb, var(--card) 78%, transparent);
     }
-
-    .btn {
-      border: 1px solid var(--card-edge);
-      border-radius: var(--radius-md);
-      padding: 11px 20px;
-      cursor: pointer;
-      transition: transform 0.06s, background 0.2s, border-color 0.2s;
-      font-weight: 500;
-      font-size: 0.88rem;
-      letter-spacing: 0.06em;
-      background: transparent;
-      color: var(--text);
-    }
-
-    .btn:active {
-      transform: translateY(1px);
-    }
-
-    .btn-primary {
-      background: linear-gradient(145deg, rgba(201, 169, 98, 0.22), rgba(201, 169, 98, 0.08));
-      border-color: rgba(201, 169, 98, 0.35);
-      color: #f0e6d4;
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
-    }
-
-    .btn-primary:hover {
-      border-color: rgba(201, 169, 98, 0.55);
-      background: linear-gradient(145deg, rgba(201, 169, 98, 0.3), rgba(201, 169, 98, 0.1));
-    }
-
-    .date-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
-
-    .date-row label {
-      color: var(--muted);
-      font-size: 0.8rem;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-    }
-
-    .tip {
-      margin-top: 4px;
-      margin-bottom: 4px;
+    .delta-value { font-weight: 700; margin-bottom: 6px; }
+    .delta-msg { font-size: 0.9rem; line-height: 1.5; }
+    .state-ok { color: var(--ok); }
+    .state-info { color: var(--info); }
+    .state-warn { color: var(--warn); }
+    .tip { color: var(--muted); font-size: 0.82rem; line-height: 1.5; }
+    .mini-stat {
+      margin: 8px 0 12px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
       font-size: 0.82rem;
       color: var(--muted);
-      border-left: 2px solid var(--accent);
-      padding: 10px 12px;
-      background: rgba(201, 169, 98, 0.06);
-      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-      line-height: 1.55;
-      font-weight: 300;
+      background: color-mix(in srgb, var(--card) 86%, transparent);
     }
+    .mini-stat b { color: var(--text); }
+    .flag-status {
+      margin-top: 10px;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.86rem;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+    .flag-status b { color: var(--text); }
 
     .table-wrap {
-      overflow-x: auto;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-md);
-      margin-top: 16px;
-      background: var(--input-bg);
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: auto;
     }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 720px;
-    }
-
-    th,
-    td {
-      padding: 11px 12px;
+    table { border-collapse: collapse; width: 100%; min-width: 1200px; }
+    th, td {
       border-bottom: 1px solid var(--line);
+      padding: 9px 10px;
       text-align: center;
       font-size: 0.82rem;
+      white-space: nowrap;
+    }
+    th { color: var(--muted); background: color-mix(in srgb, var(--card) 85%, var(--bg)); }
+
+    .chart-wrap {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      min-height: 280px;
+      background: color-mix(in srgb, var(--card) 88%, transparent);
     }
 
-    th {
-      font-family: var(--font-sans);
-      font-weight: 500;
+    .bottom-nav {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      height: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      display: flex;
+      border-top: 1px solid var(--border);
+      background: color-mix(in srgb, var(--card) 86%, transparent);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+    }
+    .bottom-nav__item {
+      flex: 1;
+      border: none;
+      background: transparent;
       color: var(--muted);
-      letter-spacing: 0.04em;
-      background: rgba(201, 169, 98, 0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
     }
-
-    td {
-      font-family: var(--font-mono);
-      color: var(--text);
-    }
-
-    td:first-child {
-      font-family: var(--font-mono);
-      color: var(--accent);
-      opacity: 0.95;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    tr:hover td {
-      background: rgba(201, 169, 98, 0.04);
-    }
-
-    .empty {
-      text-align: center;
-      color: var(--muted);
-      padding: 18px 12px;
-      font-size: 0.88rem;
-      font-family: var(--font-sans);
-    }
+    .bottom-nav__item--active { color: var(--primary); }
+    .bottom-nav__emoji { font-size: 1.2rem; transition: transform 0.16s; }
+    .bottom-nav__item--active .bottom-nav__emoji { transform: scale(1.15); }
+    .bottom-nav__label { font-size: 0.72rem; font-weight: 600; }
 
     .toast {
       position: fixed;
       left: 50%;
-      bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + 20px);
-      transform: translateX(-50%) translateY(16px);
+      transform: translateX(-50%) translateY(18px);
+      bottom: calc(var(--bottom-nav-h) + 14px + env(safe-area-inset-bottom, 0px));
+      background: var(--text);
+      color: var(--bg);
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 0.84rem;
       opacity: 0;
       pointer-events: none;
-      background: rgba(18, 22, 28, 0.95);
-      color: var(--text);
-      padding: 11px 20px;
-      border-radius: var(--radius-md);
-      font-size: 0.82rem;
-      font-family: var(--font-mono);
-      letter-spacing: 0.04em;
-      border: 1px solid var(--card-edge);
-      transition: opacity 0.28s, transform 0.28s;
-      z-index: 110;
-      box-shadow: var(--shadow);
+      transition: all 0.24s;
+      z-index: 101;
     }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    /* 模块三：军令状 — 轻度游戏化 HUD，仍保持深色金线体系 */
-
-    .card--quest {
-      position: relative;
-    }
-
-    .quest-hud {
-      display: grid;
-      gap: 18px;
-      margin-bottom: 20px;
-      padding: 18px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-md);
-      background: var(--input-bg);
-    }
-
-    .quest-hud-main {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .quest-ring-wrap {
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .quest-ring {
-      width: 118px;
-      height: 118px;
-      border-radius: 50%;
-      background: conic-gradient(
-        var(--accent) calc(var(--quest-progress, 0) * 1turn),
-        rgba(255, 255, 255, 0.05) 0
-      );
-      box-shadow: 0 0 0 1px var(--line), inset 0 0 24px rgba(0, 0, 0, 0.35);
-      animation: quest-ring-breathe 4.5s ease-in-out infinite;
-    }
-
-    .card--quest-verdict-win .quest-ring {
-      animation: quest-ring-clear 1.2s ease-out forwards;
-    }
-
-    @keyframes quest-ring-breathe {
-      0%,
-      100% {
-        filter: drop-shadow(0 0 0 transparent);
-      }
-      50% {
-        filter: drop-shadow(0 0 12px rgba(201, 169, 98, 0.12));
-      }
-    }
-
-    @keyframes quest-ring-clear {
-      0% {
-        filter: drop-shadow(0 0 0 transparent);
-      }
-      100% {
-        filter: drop-shadow(0 0 14px rgba(201, 169, 98, 0.35));
-      }
-    }
-
-    .quest-ring-inner {
-      position: absolute;
-      inset: 11px;
-      border-radius: 50%;
-      background: var(--bg-0);
-      border: 1px solid var(--line);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 6px;
-    }
-
-    .quest-ring-label {
-      font-family: var(--font-mono);
-      font-size: 0.58rem;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      text-transform: uppercase;
-    }
-
-    .quest-ring-value {
-      font-family: var(--font-mono);
-      font-size: 1.05rem;
-      font-weight: 500;
-      color: var(--accent);
-      margin-top: 2px;
-      line-height: 1.2;
-    }
-
-    .quest-ring-sub {
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      color: var(--muted);
-      margin-top: 4px;
-    }
-
-    .quest-meta {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .quest-badge {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      letter-spacing: 0.18em;
-      color: var(--accent);
-      margin-bottom: 10px;
-    }
-
-    .quest-status-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .quest-pill {
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      letter-spacing: 0.06em;
-    }
-
-    .quest-pill--active {
-      border-color: rgba(201, 169, 98, 0.4);
-      background: var(--accent-dim);
-      color: #f0e6d4;
-    }
-
-    .quest-pill--pending {
-      border-color: rgba(139, 145, 155, 0.45);
-      color: var(--muted);
-    }
-
-    .quest-pill--win {
-      border-color: rgba(201, 169, 98, 0.55);
-      background: rgba(201, 169, 98, 0.14);
-      color: #f5ecd8;
-    }
-
-    .quest-pill--lose {
-      border-color: rgba(220, 90, 90, 0.45);
-      color: #f0c4c4;
-      background: rgba(220, 90, 90, 0.08);
-    }
-
-    .quest-lines {
-      font-size: 0.84rem;
-      color: var(--muted);
-      font-weight: 300;
-      line-height: 1.65;
-    }
-
-    .quest-lines strong {
-      font-family: var(--font-mono);
-      font-weight: 500;
-      color: var(--text);
-    }
-
-    .quest-duel {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      width: 100%;
-    }
-
-    .quest-panel {
-      border: 1px solid var(--line);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px;
-      background: rgba(8, 10, 14, 0.4);
-    }
-
-    .quest-panel-head {
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      letter-spacing: 0.16em;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .quest-panel--stake .quest-panel-head {
-      color: rgba(240, 196, 196, 0.85);
-    }
-
-    .quest-panel--loot .quest-panel-head {
-      color: rgba(201, 169, 98, 0.9);
-    }
-
-    .quest-panel-body {
-      font-size: 0.86rem;
-      color: var(--text);
-      line-height: 1.55;
-      font-weight: 300;
-      white-space: pre-wrap;
-    }
-
-    .quest-panel-body--empty {
-      color: var(--muted);
-      font-style: italic;
-    }
-
-    .quest-panel--stake-highlight {
-      border-color: rgba(220, 90, 90, 0.55);
-      box-shadow: 0 0 0 1px rgba(220, 90, 90, 0.12);
-    }
-
-    .quest-panel--loot-highlight {
-      border-color: rgba(201, 169, 98, 0.55);
-      box-shadow: 0 0 0 1px rgba(201, 169, 98, 0.15);
-    }
-
-    .quest-form-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    .quest-form-row {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    .btn--ghost {
-      border-color: var(--line);
-      color: var(--muted);
-    }
-
-    .btn--ghost:hover {
-      border-color: rgba(139, 145, 155, 0.45);
-      color: var(--text);
-    }
-
-    /* 底部固定导航栏 */
-    .bottom-nav {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 100;
-      display: flex;
-      align-items: stretch;
-      justify-content: space-around;
-      min-height: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
-      padding: 0 6px env(safe-area-inset-bottom, 0px);
-      background: rgba(10, 12, 15, 0.86);
-      border-top: 1px solid var(--line);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.35);
-    }
-
-    .bottom-nav__item {
-      flex: 1;
-      max-width: 160px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      padding: 8px 6px;
-      margin: 0;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      color: var(--muted);
-      font-family: var(--font-sans);
-      -webkit-tap-highlight-color: transparent;
-      transition: color 0.2s, transform 0.15s;
-    }
-
-    .bottom-nav__item:active {
-      transform: scale(0.97);
-    }
-
-    .bottom-nav__item--active {
-      color: var(--accent);
-    }
-
-    .bottom-nav__emoji {
-      font-size: 1.28rem;
-      line-height: 1;
-      transition: transform 0.22s ease;
-      filter: grayscale(0.35);
-      opacity: 0.82;
-    }
-
-    .bottom-nav__item--active .bottom-nav__emoji {
-      transform: scale(1.2);
-      filter: grayscale(0);
-      opacity: 1;
-    }
-
-    .bottom-nav__label {
-      font-size: 0.68rem;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-    }
-
-    @media (min-width: 860px) {
-      body {
-        padding: 32px 28px calc(28px + var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
-      }
-
-      .grid-three {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
-      .grid-four {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .quest-form-row {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .quest-duel {
-        grid-template-columns: 1fr 1fr;
-      }
+    @media (min-width: 720px) {
+      body { padding-left: 18px; padding-right: 18px; }
+      .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
   </style>
 </head>
-<body>
+<body data-theme="dark">
   <div class="container">
     <header class="app-header">
-      <div class="brand-line" aria-hidden="true"></div>
-      <p class="app-eyebrow">Local only · 数据不离设备</p>
-      <h1 class="app-title">每日一瘦</h1>
-      <p class="app-subtitle">
-        以日为单位梳理饮食、饮水与运动；以周为粒度采集围度与体重。界面为私密记录而设计——克制、清晰、可长期留存。
-      </p>
+      <div class="title-wrap">
+        <h1>每日一瘦</h1>
+        <p>日课打卡 · 围度记录 · 趋势统计（本地存储）</p>
+      </div>
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="切换主题">🌙</button>
     </header>
 
     <main class="tab-main">
-      <!-- Tab 面板一：日课流水 -->
-      <div
-        id="view-daily"
-        class="tab-view tab-view--active"
-        role="tabpanel"
-        aria-labelledby="tab-btn-daily"
-        aria-hidden="false"
-      >
-      <section class="card" aria-labelledby="daily-title">
-        <div class="card-head">
-          <span class="card-index" aria-hidden="true">I</span>
-          <div>
-            <h2 id="daily-title" class="card-title">日课流水<span class="card-en">Daily</span></h2>
-            <p class="card-desc">选定日期后填写，保存即写入本地；切换日期可检索历史日课。</p>
+      <section id="view-daily" class="tab-view tab-view--active" role="tabpanel" aria-hidden="false">
+        <div class="card">
+          <h2>📝 日课流水</h2>
+          <p class="desc">记录每天饮食、饮水、运动和早晚空腹体重。</p>
+
+          <div class="section">
+            <label class="label" for="dailyDate">记录日期</label>
+            <input id="dailyDate" class="input" type="date" />
           </div>
-        </div>
 
-        <div class="date-row">
-          <label for="dailyDate">记录日期</label>
-          <input id="dailyDate" class="input" type="date" />
-        </div>
-
-        <div class="section">
-          <span class="section-label">三餐记录</span>
-          <div class="grid-three">
-            <input id="breakfast" class="input" type="text" placeholder="早餐吃了什么" />
-            <input id="lunch" class="input" type="text" placeholder="午餐吃了什么" />
-            <input id="dinner" class="input" type="text" placeholder="晚餐吃了什么" />
+          <div class="section">
+            <span class="label">三餐记录</span>
+            <div class="grid-3">
+              <input id="breakfast" class="input" type="text" placeholder="早餐" />
+              <input id="lunch" class="input" type="text" placeholder="午餐" />
+              <input id="dinner" class="input" type="text" placeholder="晚餐" />
+            </div>
           </div>
-        </div>
 
-        <div class="section">
-          <span class="section-label">饮水追踪</span>
-          <div class="water-counter" role="group" aria-label="饮水计数器">
-            <button id="waterMinus" class="counter-btn" type="button" aria-label="减少一杯">-</button>
-            <div id="waterValue" class="counter-value">0 杯</div>
-            <button id="waterPlus" class="counter-btn" type="button" aria-label="增加一杯">+</button>
+          <div class="section">
+            <span class="label">饮水追踪</span>
+            <div class="water-counter">
+              <button id="waterMinus" class="counter-btn" type="button">-</button>
+              <div id="waterValue" class="counter-value">0 杯</div>
+              <button id="waterPlus" class="counter-btn" type="button">+</button>
+            </div>
           </div>
-        </div>
 
-        <div class="section">
-          <label class="section-label" for="exercise">运动记录</label>
-          <textarea
-            id="exercise"
-            class="textarea"
-            placeholder="例如：慢跑30分钟 + 拉伸10分钟"></textarea>
-        </div>
+          <div class="section">
+            <label class="label" for="exercise">运动记录</label>
+            <textarea id="exercise" class="textarea" placeholder="例如：快走40分钟 + 拉伸10分钟"></textarea>
+          </div>
 
-        <div class="actions">
-          <button id="saveDailyBtn" class="btn btn-primary" type="button">保存今日记录</button>
+          <div class="section">
+            <span class="label">空腹体重（kg）</span>
+            <div class="grid-2">
+              <input id="morningWeight" class="input" type="number" step="0.1" min="0" placeholder="早起空腹体重" />
+              <input id="nightWeight" class="input" type="number" step="0.1" min="0" placeholder="睡前空腹体重" />
+            </div>
+          </div>
+
+          <div class="section delta-box">
+            <div id="deltaValue" class="delta-value">早晚差值：--</div>
+            <div id="deltaMessage" class="delta-msg tip">填写早晚体重后自动评估当日状态。</div>
+          </div>
+
+          <div class="actions">
+            <button id="saveDailyBtn" class="btn btn-primary" type="button">保存今日记录</button>
+          </div>
         </div>
       </section>
-      </div>
 
-      <!-- Tab 面板二：围度索引 -->
-      <div
-        id="view-weekly"
-        class="tab-view"
-        role="tabpanel"
-        aria-labelledby="tab-btn-weekly"
-        aria-hidden="true"
-      >
-      <section class="card" aria-labelledby="weekly-title">
-        <div class="card-head">
-          <span class="card-index" aria-hidden="true">II</span>
-          <div>
-            <h2 id="weekly-title" class="card-title">围度索引<span class="card-en">Weekly</span></h2>
-            <p class="card-desc">建议每周固定相同时段测量一次，降低偶然波动带来的误判。</p>
+      <section id="view-weekly" class="tab-view" role="tabpanel" aria-hidden="true">
+        <div class="card">
+          <h2>📏 围度索引</h2>
+          <p class="desc">建议每周记录一次，表格按日期倒序展示。字段已升级为精细部位测量。</p>
+          <div id="weeklyMiniStat" class="mini-stat">暂无统计摘要。</div>
+
+          <div class="section">
+            <label class="label" for="measureDate">记录日期</label>
+            <input id="measureDate" class="input" type="date" />
           </div>
-        </div>
-        <p class="tip">同一日期的记录会被覆盖为最新一条，便于你把「本周正式数据」一次性敲定。</p>
 
-        <div class="section section--spaced">
-          <div class="grid-four">
-            <div>
-              <label class="section-label" for="measureDate">日期</label>
-              <input id="measureDate" class="input" type="date" />
-            </div>
-            <div>
-              <label class="section-label" for="weight">体重（kg）</label>
-              <input id="weight" class="input" type="number" step="0.1" min="0" placeholder="如 52.3" />
-            </div>
-            <div>
-              <label class="section-label" for="chest">胸围（cm）</label>
-              <input id="chest" class="input" type="number" step="0.1" min="0" placeholder="如 85" />
-            </div>
-            <div>
-              <label class="section-label" for="waist">腰围（cm）</label>
-              <input id="waist" class="input" type="number" step="0.1" min="0" placeholder="如 68" />
-            </div>
-            <div>
-              <label class="section-label" for="hip">臀围（cm）</label>
-              <input id="hip" class="input" type="number" step="0.1" min="0" placeholder="如 92" />
-            </div>
-            <div>
-              <label class="section-label" for="abdomen">小腹围（cm）</label>
-              <input id="abdomen" class="input" type="number" step="0.1" min="0" placeholder="如 75" />
+          <div class="section">
+            <div class="grid-2">
+              <div><label class="label" for="heightCm">身高(cm)</label><input id="heightCm" class="input" type="number" step="0.1" min="0" /></div>
+              <div><label class="label" for="currentWeight">当前体重(kg)</label><input id="currentWeight" class="input" type="number" step="0.1" min="0" /></div>
+              <div><label class="label" for="shoulderWidth">肩宽(cm)</label><input id="shoulderWidth" class="input" type="number" step="0.1" min="0" /></div>
+              <div><label class="label" for="upperChest">上胸围(cm)</label><input id="upperChest" class="input" type="number" step="0.1" min="0" /></div>
+              <div><label class="label" for="lowerChest">下胸围(cm)</label><input id="lowerChest" class="input" type="number" step="0.1" min="0" /></div>
+              <div><label class="label" for="waistNatural">自然腰围(cm)</label><input id="waistNatural" class="input" type="number" step="0.1" min="0" /></div>
+              <div><label class="label" for="abdomen">小腹围(cm)</label><input id="abdomen" class="input" type="number" step="0.1" min="0" /></div>
+              <div><label class="label" for="hip">臀围(cm)</label><input id="hip" class="input" type="number" step="0.1" min="0" /></div>
+              <div><label class="label" for="thigh">大腿围(cm)</label><input id="thigh" class="input" type="number" step="0.1" min="0" /></div>
+              <div><label class="label" for="calf">小腿围(cm)</label><input id="calf" class="input" type="number" step="0.1" min="0" /></div>
+              <div><label class="label" for="arm">手臂围(cm)</label><input id="arm" class="input" type="number" step="0.1" min="0" /></div>
             </div>
           </div>
-        </div>
 
-        <div class="actions">
-          <button id="addMeasureBtn" class="btn btn-primary" type="button">添加本周数据</button>
-        </div>
+          <div class="actions">
+            <button id="addMeasureBtn" class="btn btn-primary" type="button">添加本周数据</button>
+          </div>
 
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>日期</th>
-                <th>体重(kg)</th>
-                <th>胸围(cm)</th>
-                <th>腰围(cm)</th>
-                <th>臀围(cm)</th>
-                <th>小腹围(cm)</th>
-              </tr>
-            </thead>
-            <tbody id="measureTableBody"></tbody>
-          </table>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>日期</th><th>身高</th><th>体重</th><th>肩宽</th><th>上胸</th><th>下胸</th><th>自然腰</th><th>小腹</th><th>臀围</th><th>大腿</th><th>小腿</th><th>手臂</th>
+                </tr>
+              </thead>
+              <tbody id="measureTableBody"></tbody>
+            </table>
+          </div>
         </div>
       </section>
-      </div>
 
-      <!-- Tab 面板三：军令状 -->
-      <div
-        id="view-flag"
-        class="tab-view"
-        role="tabpanel"
-        aria-labelledby="tab-btn-flag"
-        aria-hidden="true"
-      >
-      <section class="card card--quest" id="flagCard" aria-labelledby="flag-title">
-        <div class="card-head">
-          <span class="card-index" aria-hidden="true">III</span>
-          <div>
-            <h2 id="flag-title" class="card-title">军令状<span class="card-en">Flag</span></h2>
-            <p class="card-desc">
-              立下截止日与目标体重，并写下奖惩。进度环表示「立约日 → 截止日」的时间推进；到期后按围度索引里「截止日及之前」最近一次体重自动判定通关与否。
-            </p>
-          </div>
-        </div>
+      <section id="view-flag" class="tab-view" role="tabpanel" aria-hidden="true">
+        <div class="card">
+          <h2>🚩 军令状</h2>
+          <p class="desc">设定截止日与目标体重，写下达成奖励和未达成惩罚，到期自动判定。</p>
 
-        <div class="quest-hud" id="flagHud" aria-live="polite"></div>
-
-        <div class="quest-form-grid">
-          <div class="quest-form-row">
-            <div class="section">
-              <label class="section-label" for="flagDeadline">截止日</label>
+          <div class="grid-2 section">
+            <div>
+              <label class="label" for="flagDeadline">截止日</label>
               <input id="flagDeadline" class="input" type="date" />
             </div>
-            <div class="section">
-              <label class="section-label" for="flagTarget">目标体重（kg）</label>
-              <input id="flagTarget" class="input" type="number" step="0.1" min="0" placeholder="如 52.0" />
+            <div>
+              <label class="label" for="flagTarget">目标体重(kg)</label>
+              <input id="flagTarget" class="input" type="number" min="0" step="0.1" placeholder="如 52.0" />
             </div>
           </div>
-          <div class="section">
-            <label class="section-label" for="flagPenalty">未达成则…</label>
-            <textarea
-              id="flagPenalty"
-              class="textarea textarea--compact"
-              placeholder="例如：给闺蜜发 200 字检讨 + 承包一周奶茶"></textarea>
-          </div>
-          <div class="section">
-            <label class="section-label" for="flagReward">达成则…</label>
-            <textarea
-              id="flagReward"
-              class="textarea textarea--compact"
-              placeholder="例如：下单那件犹豫很久的外套"></textarea>
-          </div>
-        </div>
 
-        <div class="actions">
-          <button id="flagSaveBtn" class="btn btn-primary" type="button">保存军令状</button>
-          <button id="flagClearBtn" class="btn btn--ghost" type="button">清除并重立</button>
+          <div class="section">
+            <label class="label" for="flagPenalty">未达成则...</label>
+            <textarea id="flagPenalty" class="textarea" placeholder="例如：暂停奶茶7天"></textarea>
+          </div>
+          <div class="section">
+            <label class="label" for="flagReward">达成则...</label>
+            <textarea id="flagReward" class="textarea" placeholder="例如：买一件喜欢的衣服"></textarea>
+          </div>
+
+          <div class="actions">
+            <button id="saveFlagBtn" class="btn btn-primary" type="button">保存军令状</button>
+            <button id="clearFlagBtn" class="btn" type="button">清空</button>
+          </div>
+
+          <div id="flagStatus" class="flag-status">暂无军令状，先立个目标吧。</div>
         </div>
       </section>
-      </div>
+
+      <section id="view-trend" class="tab-view" role="tabpanel" aria-hidden="true">
+        <div class="card">
+          <h2>📈 趋势统计</h2>
+          <p class="desc">基于“日课流水”中的早起空腹体重，自动绘制历史折线趋势图。</p>
+          <div class="chart-wrap">
+            <canvas id="weightChart"></canvas>
+          </div>
+          <p class="tip" style="margin-top:10px;">提示：先在日课中记录早起体重，图表会自动更新。</p>
+        </div>
+      </section>
     </main>
   </div>
 
   <nav class="bottom-nav" role="tablist" aria-label="底部导航">
-    <button
-      type="button"
-      id="tab-btn-daily"
-      class="bottom-nav__item bottom-nav__item--active"
-      role="tab"
-      aria-selected="true"
-      aria-controls="view-daily"
-      data-tab="daily"
-    >
-      <span class="bottom-nav__emoji" aria-hidden="true">📝</span>
-      <span class="bottom-nav__label">日课</span>
+    <button id="tab-btn-daily" class="bottom-nav__item bottom-nav__item--active" role="tab" data-tab="daily" aria-selected="true">
+      <span class="bottom-nav__emoji">📝</span><span class="bottom-nav__label">日课</span>
     </button>
-    <button
-      type="button"
-      id="tab-btn-weekly"
-      class="bottom-nav__item"
-      role="tab"
-      aria-selected="false"
-      aria-controls="view-weekly"
-      data-tab="weekly"
-    >
-      <span class="bottom-nav__emoji" aria-hidden="true">📏</span>
-      <span class="bottom-nav__label">围度</span>
+    <button id="tab-btn-weekly" class="bottom-nav__item" role="tab" data-tab="weekly" aria-selected="false">
+      <span class="bottom-nav__emoji">📏</span><span class="bottom-nav__label">围度</span>
     </button>
-    <button
-      type="button"
-      id="tab-btn-flag"
-      class="bottom-nav__item"
-      role="tab"
-      aria-selected="false"
-      aria-controls="view-flag"
-      data-tab="flag"
-    >
-      <span class="bottom-nav__emoji" aria-hidden="true">🚩</span>
-      <span class="bottom-nav__label">军令</span>
+    <button id="tab-btn-flag" class="bottom-nav__item" role="tab" data-tab="flag" aria-selected="false">
+      <span class="bottom-nav__emoji">🚩</span><span class="bottom-nav__label">军令</span>
+    </button>
+    <button id="tab-btn-trend" class="bottom-nav__item" role="tab" data-tab="trend" aria-selected="false">
+      <span class="bottom-nav__emoji">📈</span><span class="bottom-nav__label">趋势</span>
     </button>
   </nav>
 
@@ -1035,12 +437,13 @@
 
   <script>
     // -----------------------------
-    // 通用工具：日期和提示
+    // 存储键与基础工具
     // -----------------------------
     const STORAGE_KEYS = {
       daily: "health_app_daily_records",
       weekly: "health_app_weekly_measurements",
-      flag: "health_app_weight_flag"
+      flag: "health_app_weight_flag",
+      theme: "health_app_theme"
     };
 
     function getTodayString() {
@@ -1051,107 +454,95 @@
       return y + "-" + m + "-" + d;
     }
 
+    function parseJSONSafe(raw, fallback) {
+      try { return raw ? JSON.parse(raw) : fallback; } catch (_) { return fallback; }
+    }
+
+    function toNumberOrEmpty(value) {
+      if (value === "" || value == null) return "";
+      const n = Number(value);
+      return Number.isFinite(n) ? n : "";
+    }
+
     function showToast(message) {
       const toast = document.getElementById("toast");
       toast.textContent = message;
       toast.classList.add("show");
-      window.clearTimeout(showToast.timer);
-      showToast.timer = window.setTimeout(() => {
-        toast.classList.remove("show");
-      }, 1600);
-    }
-
-    function parseJSONSafe(raw, fallback) {
-      try {
-        return raw ? JSON.parse(raw) : fallback;
-      } catch (e) {
-        return fallback;
-      }
-    }
-
-    /** 避免把用户输入拼进 innerHTML 时产生 XSS */
-    function escapeHtml(str) {
-      if (str == null) return "";
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
-    }
-
-    /** 解析 YYYY-MM-DD 为本地日历日（规避时区偏移） */
-    function parseYMD(dateStr) {
-      const parts = dateStr.split("-");
-      const y = Number(parts[0]);
-      const m = Number(parts[1]);
-      const d = Number(parts[2]);
-      return new Date(y, m - 1, d);
-    }
-
-    /** 两个日期字符串之间的整天数（可正可负） */
-    function daysBetween(startStr, endStr) {
-      const a = parseYMD(startStr).getTime();
-      const b = parseYMD(endStr).getTime();
-      return Math.round((b - a) / 86400000);
-    }
-
-    function clamp(n, min, max) {
-      return Math.min(max, Math.max(min, n));
+      clearTimeout(showToast.t);
+      showToast.t = setTimeout(() => toast.classList.remove("show"), 1600);
     }
 
     // -----------------------------
-    // 底部 Tab 切换（仅控制显隐与高亮，不改动 LocalStorage 与业务函数）
+    // 主题切换
     // -----------------------------
-    const TAB_KEYS = ["daily", "weekly", "flag"];
+    const themeToggleBtn = document.getElementById("themeToggle");
+
+    function applyTheme(theme) {
+      const root = document.body;
+      const next = theme === "light" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      themeToggleBtn.textContent = next === "dark" ? "🌙" : "☀️";
+      localStorage.setItem(STORAGE_KEYS.theme, next);
+      updateWeightChart();
+    }
+
+    themeToggleBtn.addEventListener("click", () => {
+      const current = document.body.getAttribute("data-theme") || "dark";
+      applyTheme(current === "dark" ? "light" : "dark");
+    });
+
+    // -----------------------------
+    // 底部 Tabs 切换
+    // -----------------------------
+    const TAB_KEYS = ["daily", "weekly", "flag", "trend"];
     const tabViews = {
       daily: document.getElementById("view-daily"),
       weekly: document.getElementById("view-weekly"),
-      flag: document.getElementById("view-flag")
+      flag: document.getElementById("view-flag"),
+      trend: document.getElementById("view-trend")
     };
     const tabButtons = document.querySelectorAll(".bottom-nav__item[data-tab]");
 
     function activateTab(tabKey) {
-      if (TAB_KEYS.indexOf(tabKey) === -1) return;
-      TAB_KEYS.forEach(function (key) {
-        var isOn = key === tabKey;
-        var panel = tabViews[key];
-        if (panel) {
-          panel.classList.toggle("tab-view--active", isOn);
-          panel.setAttribute("aria-hidden", isOn ? "false" : "true");
-        }
+      if (!TAB_KEYS.includes(tabKey)) return;
+      TAB_KEYS.forEach((key) => {
+        const active = key === tabKey;
+        tabViews[key].classList.toggle("tab-view--active", active);
+        tabViews[key].setAttribute("aria-hidden", active ? "false" : "true");
       });
-      tabButtons.forEach(function (btn) {
-        var active = btn.getAttribute("data-tab") === tabKey;
+      tabButtons.forEach((btn) => {
+        const active = btn.getAttribute("data-tab") === tabKey;
         btn.classList.toggle("bottom-nav__item--active", active);
         btn.setAttribute("aria-selected", active ? "true" : "false");
       });
+      if (tabKey === "trend") updateWeightChart();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    tabButtons.forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        activateTab(btn.getAttribute("data-tab"));
-      });
+    tabButtons.forEach((btn) => {
+      btn.addEventListener("click", () => activateTab(btn.getAttribute("data-tab")));
     });
 
     // -----------------------------
-    // 模块一：每日习惯打卡逻辑
+    // 模块一：日课流水
     // -----------------------------
     const dailyDateEl = document.getElementById("dailyDate");
     const breakfastEl = document.getElementById("breakfast");
     const lunchEl = document.getElementById("lunch");
     const dinnerEl = document.getElementById("dinner");
     const exerciseEl = document.getElementById("exercise");
+    const morningWeightEl = document.getElementById("morningWeight");
+    const nightWeightEl = document.getElementById("nightWeight");
+    const deltaValueEl = document.getElementById("deltaValue");
+    const deltaMessageEl = document.getElementById("deltaMessage");
     const waterValueEl = document.getElementById("waterValue");
     const waterMinusEl = document.getElementById("waterMinus");
     const waterPlusEl = document.getElementById("waterPlus");
     const saveDailyBtn = document.getElementById("saveDailyBtn");
-
     let waterCount = 0;
 
     function getDailyAllRecords() {
-      const raw = localStorage.getItem(STORAGE_KEYS.daily);
-      return parseJSONSafe(raw, {});
+      return parseJSONSafe(localStorage.getItem(STORAGE_KEYS.daily), {});
     }
 
     function setDailyAllRecords(data) {
@@ -1162,215 +553,197 @@
       waterValueEl.textContent = waterCount + " 杯";
     }
 
+    function renderDayState() {
+      const m = Number(morningWeightEl.value);
+      const n = Number(nightWeightEl.value);
+      if (!Number.isFinite(m) || !Number.isFinite(n)) {
+        deltaValueEl.textContent = "早晚差值：--";
+        deltaMessageEl.className = "delta-msg tip";
+        deltaMessageEl.textContent = "填写早晚体重后自动评估当日状态。";
+        return;
+      }
+      const diff = Number((n - m).toFixed(2));
+      deltaValueEl.textContent = "早晚差值：" + diff.toFixed(2) + " kg";
+      if (diff < 0.5) {
+        deltaMessageEl.className = "delta-msg state-ok";
+        deltaMessageEl.textContent = "🌟 极佳！今天饮食克制，代谢通畅，明天大概率掉秤！";
+      } else if (diff <= 1.5) {
+        deltaMessageEl.className = "delta-msg state-info";
+        deltaMessageEl.textContent = "💧 正常波动。食物水分正常残留，代谢平稳。";
+      } else {
+        deltaMessageEl.className = "delta-msg state-warn";
+        deltaMessageEl.textContent = "⚠️ 警告！今天碳水/钠可能超标导致储水，或晚餐过晚。明早注意喝黑咖啡消肿哦！";
+      }
+    }
+
     function loadDailyByDate(dateStr) {
       const all = getDailyAllRecords();
-      const record = all[dateStr] || {
-        breakfast: "",
-        lunch: "",
-        dinner: "",
-        water: 0,
-        exercise: ""
-      };
-
-      breakfastEl.value = record.breakfast;
-      lunchEl.value = record.lunch;
-      dinnerEl.value = record.dinner;
-      exerciseEl.value = record.exercise;
-      waterCount = Number(record.water) || 0;
+      const rec = all[dateStr] || {};
+      breakfastEl.value = rec.breakfast || "";
+      lunchEl.value = rec.lunch || "";
+      dinnerEl.value = rec.dinner || "";
+      exerciseEl.value = rec.exercise || "";
+      morningWeightEl.value = rec.morningWeight ?? "";
+      nightWeightEl.value = rec.nightWeight ?? "";
+      waterCount = Number(rec.water) || 0;
       renderWaterCount();
+      renderDayState();
     }
 
     function saveDailyByCurrentDate() {
-      const dateStr = dailyDateEl.value;
-      if (!dateStr) {
-        showToast("请先选择日期");
-        return;
-      }
+      const date = dailyDateEl.value;
+      if (!date) return showToast("请先选择日期");
 
       const all = getDailyAllRecords();
-      all[dateStr] = {
+      all[date] = {
         breakfast: breakfastEl.value.trim(),
         lunch: lunchEl.value.trim(),
         dinner: dinnerEl.value.trim(),
         water: waterCount,
         exercise: exerciseEl.value.trim(),
+        morningWeight: toNumberOrEmpty(morningWeightEl.value),
+        nightWeight: toNumberOrEmpty(nightWeightEl.value),
         updatedAt: Date.now()
       };
       setDailyAllRecords(all);
+      renderDayState();
+      updateWeightChart();
 
-      // 轻量按钮反馈
       const oldText = saveDailyBtn.textContent;
       saveDailyBtn.textContent = "已保存";
-      window.setTimeout(() => {
-        saveDailyBtn.textContent = oldText;
-      }, 1200);
-
-      showToast("今日记录已保存");
+      setTimeout(() => (saveDailyBtn.textContent = oldText), 1200);
+      showToast("日课记录已保存");
     }
 
-    dailyDateEl.addEventListener("change", () => {
-      loadDailyByDate(dailyDateEl.value);
-    });
-
-    waterMinusEl.addEventListener("click", () => {
-      waterCount = Math.max(0, waterCount - 1);
-      renderWaterCount();
-    });
-
-    waterPlusEl.addEventListener("click", () => {
-      waterCount += 1;
-      renderWaterCount();
-    });
-
+    dailyDateEl.addEventListener("change", () => loadDailyByDate(dailyDateEl.value));
+    waterMinusEl.addEventListener("click", () => { waterCount = Math.max(0, waterCount - 1); renderWaterCount(); });
+    waterPlusEl.addEventListener("click", () => { waterCount += 1; renderWaterCount(); });
     saveDailyBtn.addEventListener("click", saveDailyByCurrentDate);
+    morningWeightEl.addEventListener("input", renderDayState);
+    nightWeightEl.addEventListener("input", renderDayState);
 
     // -----------------------------
-    // 模块二：每周身材数据追踪逻辑
+    // 模块二：围度索引
     // -----------------------------
     const measureDateEl = document.getElementById("measureDate");
-    const weightEl = document.getElementById("weight");
-    const chestEl = document.getElementById("chest");
-    const waistEl = document.getElementById("waist");
-    const hipEl = document.getElementById("hip");
-    const abdomenEl = document.getElementById("abdomen");
     const addMeasureBtn = document.getElementById("addMeasureBtn");
     const measureTableBody = document.getElementById("measureTableBody");
+    const weeklyMiniStatEl = document.getElementById("weeklyMiniStat");
+
+    const weeklyFields = [
+      "heightCm", "currentWeight", "shoulderWidth", "upperChest", "lowerChest",
+      "waistNatural", "abdomen", "hip", "thigh", "calf", "arm"
+    ];
+
+    const weeklyEls = {};
+    weeklyFields.forEach((id) => { weeklyEls[id] = document.getElementById(id); });
 
     function getWeeklyRecords() {
-      const raw = localStorage.getItem(STORAGE_KEYS.weekly);
-      return parseJSONSafe(raw, []);
+      return parseJSONSafe(localStorage.getItem(STORAGE_KEYS.weekly), []);
     }
 
     function setWeeklyRecords(data) {
       localStorage.setItem(STORAGE_KEYS.weekly, JSON.stringify(data));
     }
 
-    function toNumberOrEmpty(value) {
-      if (value === "" || value === null || value === undefined) return "";
-      const n = Number(value);
-      return Number.isFinite(n) ? n : "";
-    }
-
     function renderWeeklyTable() {
-      const records = getWeeklyRecords()
-        .slice()
-        .sort((a, b) => (a.date < b.date ? 1 : -1));
-
-      if (records.length === 0) {
-        measureTableBody.innerHTML = '<tr><td colspan="6" class="empty">暂无记录，先添加一条本周数据吧。</td></tr>';
+      const records = getWeeklyRecords().slice().sort((a, b) => (a.date < b.date ? 1 : -1));
+      if (!records.length) {
+        measureTableBody.innerHTML = '<tr><td colspan="12" class="tip" style="padding:14px;">暂无记录，先添加一条吧。</td></tr>';
+        weeklyMiniStatEl.innerHTML = "暂无统计摘要。";
         return;
       }
-
-      const rows = records.map((item) => {
-        return (
-          "<tr>" +
-          "<td>" + item.date + "</td>" +
-          "<td>" + (item.weight ?? "") + "</td>" +
-          "<td>" + (item.chest ?? "") + "</td>" +
-          "<td>" + (item.waist ?? "") + "</td>" +
-          "<td>" + (item.hip ?? "") + "</td>" +
-          "<td>" + (item.abdomen ?? "") + "</td>" +
-          "</tr>"
-        );
+      const rows = records.map((r) => {
+        return "<tr>" +
+          "<td>" + (r.date ?? "") + "</td>" +
+          "<td>" + (r.heightCm ?? "") + "</td>" +
+          "<td>" + ((r.currentWeight ?? r.weight) ?? "") + "</td>" +
+          "<td>" + (r.shoulderWidth ?? "") + "</td>" +
+          "<td>" + ((r.upperChest ?? r.chest) ?? "") + "</td>" +
+          "<td>" + (r.lowerChest ?? "") + "</td>" +
+          "<td>" + ((r.waistNatural ?? r.waist) ?? "") + "</td>" +
+          "<td>" + (r.abdomen ?? "") + "</td>" +
+          "<td>" + (r.hip ?? "") + "</td>" +
+          "<td>" + (r.thigh ?? "") + "</td>" +
+          "<td>" + (r.calf ?? "") + "</td>" +
+          "<td>" + (r.arm ?? "") + "</td>" +
+          "</tr>";
       });
-
       measureTableBody.innerHTML = rows.join("");
+      renderWeeklyMiniStat(records);
+    }
+
+    function renderWeeklyMiniStat(sortedRecords) {
+      const latest = sortedRecords[0];
+      const prev = sortedRecords[1];
+      const latestW = Number(latest?.currentWeight ?? latest?.weight);
+      const prevW = Number(prev?.currentWeight ?? prev?.weight);
+      if (!Number.isFinite(latestW)) {
+        weeklyMiniStatEl.innerHTML = "最近记录：<b>" + (latest?.date || "--") + "</b>，当前体重未填写。";
+        return;
+      }
+      if (!Number.isFinite(prevW)) {
+        weeklyMiniStatEl.innerHTML = "最近记录：<b>" + (latest?.date || "--") + "</b>，当前体重 <b>" + latestW.toFixed(1) + " kg</b>。";
+        return;
+      }
+      const delta = Number((latestW - prevW).toFixed(1));
+      const sign = delta > 0 ? "+" : "";
+      weeklyMiniStatEl.innerHTML =
+        "最近记录：<b>" + (latest?.date || "--") + "</b>，当前体重 <b>" + latestW.toFixed(1) + " kg</b>；较上次变化 <b>" + sign + delta.toFixed(1) + " kg</b>。";
     }
 
     function addWeeklyMeasurement() {
       const date = measureDateEl.value;
-      if (!date) {
-        showToast("请选择日期");
-        return;
-      }
-
-      const entry = {
-        date,
-        weight: toNumberOrEmpty(weightEl.value),
-        chest: toNumberOrEmpty(chestEl.value),
-        waist: toNumberOrEmpty(waistEl.value),
-        hip: toNumberOrEmpty(hipEl.value),
-        abdomen: toNumberOrEmpty(abdomenEl.value),
-        createdAt: Date.now()
-      };
+      if (!date) return showToast("请选择日期");
+      const entry = { date, updatedAt: Date.now() };
+      weeklyFields.forEach((key) => { entry[key] = toNumberOrEmpty(weeklyEls[key].value); });
 
       const records = getWeeklyRecords();
-      const existingIndex = records.findIndex((r) => r.date === date);
-
-      // 同一天的周记录进行覆盖，保证每周一条更清晰
-      if (existingIndex >= 0) {
-        records[existingIndex] = entry;
-      } else {
-        records.push(entry);
-      }
-
+      const i = records.findIndex((x) => x.date === date);
+      if (i >= 0) records[i] = { ...records[i], ...entry };
+      else records.push(entry);
       setWeeklyRecords(records);
       renderWeeklyTable();
-      renderFlagHud();
 
       const oldText = addMeasureBtn.textContent;
       addMeasureBtn.textContent = "已添加";
-      window.setTimeout(() => {
-        addMeasureBtn.textContent = oldText;
-      }, 1200);
-
-      showToast("每周数据已保存");
+      setTimeout(() => (addMeasureBtn.textContent = oldText), 1200);
+      showToast("围度记录已保存");
     }
 
     addMeasureBtn.addEventListener("click", addWeeklyMeasurement);
 
     // -----------------------------
-    // 模块三：军令状（Flag）
+    // 模块三：军令状
     // -----------------------------
-    const flagCard = document.getElementById("flagCard");
-    const flagHud = document.getElementById("flagHud");
     const flagDeadlineEl = document.getElementById("flagDeadline");
     const flagTargetEl = document.getElementById("flagTarget");
     const flagPenaltyEl = document.getElementById("flagPenalty");
     const flagRewardEl = document.getElementById("flagReward");
-    const flagSaveBtn = document.getElementById("flagSaveBtn");
-    const flagClearBtn = document.getElementById("flagClearBtn");
+    const saveFlagBtn = document.getElementById("saveFlagBtn");
+    const clearFlagBtn = document.getElementById("clearFlagBtn");
+    const flagStatusEl = document.getElementById("flagStatus");
 
     function getFlagRecord() {
-      const raw = localStorage.getItem(STORAGE_KEYS.flag);
-      return parseJSONSafe(raw, null);
+      return parseJSONSafe(localStorage.getItem(STORAGE_KEYS.flag), null);
     }
 
     function setFlagRecord(data) {
-      if (data == null) {
+      if (!data) {
         localStorage.removeItem(STORAGE_KEYS.flag);
-        return;
+      } else {
+        localStorage.setItem(STORAGE_KEYS.flag, JSON.stringify(data));
       }
-      localStorage.setItem(STORAGE_KEYS.flag, JSON.stringify(data));
     }
 
-    /** 截止日及之前，按日期最近的一条有效体重 */
-    function getWeightOnOrBefore(deadlineStr, records) {
-      const valid = records.filter(function (r) {
-        if (!r.date || r.date > deadlineStr) return false;
-        const w = r.weight;
-        return w !== "" && w != null && Number.isFinite(Number(w));
-      });
-      if (valid.length === 0) return null;
-      valid.sort(function (a, b) {
-        return a.date.localeCompare(b.date);
-      });
-      const last = valid[valid.length - 1];
-      return Number(last.weight);
-    }
-
-    /** 全库最近一次有体重的记录 */
-    function getLatestWeight(records) {
-      const valid = records.filter(function (r) {
-        const w = r.weight;
-        return w !== "" && w != null && Number.isFinite(Number(w));
-      });
-      if (valid.length === 0) return null;
-      valid.sort(function (a, b) {
-        return a.date.localeCompare(b.date);
-      });
-      const last = valid[valid.length - 1];
-      return { weight: Number(last.weight), date: last.date };
+    function getLatestMorningWeightOnOrBefore(deadline) {
+      const all = getDailyAllRecords();
+      const dates = Object.keys(all).filter((d) => d <= deadline).sort();
+      for (let i = dates.length - 1; i >= 0; i -= 1) {
+        const v = Number(all[dates[i]]?.morningWeight);
+        if (Number.isFinite(v) && v > 0) return { date: dates[i], weight: v };
+      }
+      return null;
     }
 
     function loadFlagToForm() {
@@ -1383,236 +756,178 @@
         return;
       }
       flagDeadlineEl.value = rec.deadline || "";
-      flagTargetEl.value = rec.targetKg != null && rec.targetKg !== "" ? rec.targetKg : "";
+      flagTargetEl.value = rec.targetKg ?? "";
       flagPenaltyEl.value = rec.penalty || "";
       flagRewardEl.value = rec.reward || "";
     }
 
-    function renderFlagHud() {
-      flagCard.classList.remove("card--quest-verdict-win");
+    function renderFlagStatus() {
       const rec = getFlagRecord();
+      if (!rec || !rec.deadline || !Number.isFinite(Number(rec.targetKg))) {
+        flagStatusEl.innerHTML = "暂无军令状，先立个目标吧。";
+        return;
+      }
+      const target = Number(rec.targetKg);
       const today = getTodayString();
-      const weekly = getWeeklyRecords();
+      const isDue = today > rec.deadline;
+      const latest = getLatestMorningWeightOnOrBefore(rec.deadline);
+      const daysLeft = Math.max(0, Math.ceil((new Date(rec.deadline) - new Date(today)) / 86400000));
 
-      if (!rec || !rec.deadline || rec.targetKg === "" || rec.targetKg == null) {
-        flagHud.innerHTML =
-          '<div class="quest-hud-main">' +
-          '<div class="quest-ring-wrap" style="--quest-progress:0">' +
-          '<div class="quest-ring"></div>' +
-          '<div class="quest-ring-inner">' +
-          '<span class="quest-ring-label">quest</span>' +
-          '<span class="quest-ring-value">—</span>' +
-          '<span class="quest-ring-sub">未立约</span>' +
-          "</div></div>" +
-          '<div class="quest-meta">' +
-          '<div class="quest-badge">[ MAIN · IDLE ]</div>' +
-          '<div class="quest-lines">填写下方截止日、目标体重与奖惩条款，点击<strong>保存军令状</strong>以激活任务。</div>' +
-          "</div></div>";
+      if (!isDue) {
+        flagStatusEl.innerHTML =
+          "状态：<b>进行中</b> · 截止日 <b>" + rec.deadline + "</b>，目标 <b>" + target.toFixed(1) +
+          " kg</b>，剩余 <b>" + daysLeft + "</b> 天。";
         return;
       }
 
-      const targetKg = Number(rec.targetKg);
-      const pledgedAt = rec.pledgedAt || rec.deadline;
-      const totalDays = daysBetween(pledgedAt, rec.deadline);
-      const elapsed = daysBetween(pledgedAt, today);
-      let timeProgress = 1;
-      if (totalDays > 0) {
-        timeProgress = clamp(elapsed / totalDays, 0, 1);
-      } else if (totalDays < 0) {
-        timeProgress = 0;
+      if (!latest) {
+        flagStatusEl.innerHTML =
+          "状态：<b>待判定</b> · 到期后未找到可用于判定的早起体重，请补录日课数据。";
+        return;
       }
 
-      const daysLeft = daysBetween(today, rec.deadline);
-      const isPast = today > rec.deadline;
-      const judgmentW = getWeightOnOrBefore(rec.deadline, weekly);
-      const latest = getLatestWeight(weekly);
-      const tol = 0.05;
-
-      let pillClass = "quest-pill quest-pill--active";
-      let pillText = "[ 进行中 · ACTIVE ]";
-      let ringMain = "D-" + Math.max(0, daysLeft);
-      let ringSub = "距截止日";
-      let metaHtml = "";
-
-      if (isPast) {
-        ringMain = "END";
-        ringSub = "已到期";
-        if (judgmentW == null) {
-          pillClass = "quest-pill quest-pill--pending";
-          pillText = "[ 待结算 · PENDING ]";
-          metaHtml =
-            "<p class=\"quest-lines\">截止日已到，但<strong>围度索引</strong>中尚无「" +
-            escapeHtml(rec.deadline) +
-            "」及之前的体重。请补录后刷新本页，或自行对照奖惩执行。</p>";
-        } else if (judgmentW <= targetKg + tol) {
-          pillClass = "quest-pill quest-pill--win";
-          pillText = "[ 通关 · CLEAR ]";
-          flagCard.classList.add("card--quest-verdict-win");
-          metaHtml =
-            "<p class=\"quest-lines\">判定体重 <strong>" +
-            judgmentW +
-            " kg</strong>（截止前最近档案），目标 <strong>" +
-            targetKg +
-            " kg</strong>。条款生效：<strong>达成则…</strong></p>";
-        } else {
-          pillClass = "quest-pill quest-pill--lose";
-          pillText = "[ 失守 · FAIL ]";
-          metaHtml =
-            "<p class=\"quest-lines\">判定体重 <strong>" +
-            judgmentW +
-            " kg</strong>，未达目标 <strong>" +
-            targetKg +
-            " kg</strong>。条款生效：<strong>未达成则…</strong></p>";
-        }
+      const clear = latest.weight <= target + 0.05;
+      if (clear) {
+        flagStatusEl.innerHTML =
+          "状态：<b>达成</b> ✅ · 判定体重 <b>" + latest.weight.toFixed(1) + " kg</b>（" + latest.date +
+          "），奖励：<b>" + (rec.reward || "未填写") + "</b>";
       } else {
-        if (latest) {
-          const diff = latest.weight - targetKg;
-          if (diff > tol) {
-            metaHtml +=
-              "<p class=\"quest-lines\">当前参考体重 <strong>" +
-              latest.weight +
-              " kg</strong>（" +
-              escapeHtml(latest.date) +
-              "），距离目标还差 <strong>" +
-              diff.toFixed(1) +
-              " kg</strong>。</p>";
-          } else {
-            metaHtml +=
-              "<p class=\"quest-lines\">当前参考体重 <strong>" +
-              latest.weight +
-              " kg</strong>，已达到或优于目标线——保持到截止日即稳。</p>";
-          }
-        } else {
-          metaHtml +=
-            '<p class="quest-lines">尚未在<strong>围度索引</strong>中记录体重；建议先建档，便于任务面板显示参考进度。</p>';
-        }
-        metaHtml +=
-          "<p class=\"quest-lines\">立约日 <strong>" +
-          escapeHtml(pledgedAt) +
-          "</strong> → 截止日 <strong>" +
-          escapeHtml(rec.deadline) +
-          "</strong>，周期共 <strong>" +
-          Math.max(0, totalDays) +
-          "</strong> 天。</p>";
+        flagStatusEl.innerHTML =
+          "状态：<b>未达成</b> ⚠️ · 判定体重 <b>" + latest.weight.toFixed(1) + " kg</b>（" + latest.date +
+          "），惩罚：<b>" + (rec.penalty || "未填写") + "</b>";
       }
-
-      const penalty = (rec.penalty || "").trim();
-      const reward = (rec.reward || "").trim();
-      const penaltyBody = penalty
-        ? escapeHtml(penalty)
-        : '<span class="quest-panel-body--empty">（未填写惩罚条款）</span>';
-      const rewardBody = reward
-        ? escapeHtml(reward)
-        : '<span class="quest-panel-body--empty">（未填写奖励条款）</span>';
-
-      let stakeExtra = "";
-      let lootExtra = "";
-      if (isPast && judgmentW != null) {
-        if (judgmentW <= targetKg + tol) lootExtra = " quest-panel--loot-highlight";
-        else stakeExtra = " quest-panel--stake-highlight";
-      }
-
-      flagHud.innerHTML =
-        '<div class="quest-hud-main">' +
-        '<div class="quest-ring-wrap" style="--quest-progress:' +
-        timeProgress +
-        '">' +
-        '<div class="quest-ring"></div>' +
-        '<div class="quest-ring-inner">' +
-        '<span class="quest-ring-label">timeline</span>' +
-        '<span class="quest-ring-value">' +
-        escapeHtml(ringMain) +
-        "</span>" +
-        '<span class="quest-ring-sub">' +
-        escapeHtml(ringSub) +
-        "</span>" +
-        "</div></div>" +
-        '<div class="quest-meta">' +
-        '<div class="quest-badge">[ MAIN · WEIGHT QUEST ]</div>' +
-        '<div class="quest-status-row">' +
-        '<span class="' +
-        pillClass +
-        '">' +
-        pillText +
-        "</span>" +
-        '<span class="quest-lines" style="margin:0">目标 <strong>' +
-        targetKg +
-        " kg</strong> · 截止 <strong>" +
-        escapeHtml(rec.deadline) +
-        "</strong></span></div>" +
-        metaHtml +
-        "</div></div>" +
-        '<div class="quest-duel">' +
-        '<div class="quest-panel quest-panel--stake' +
-        stakeExtra +
-        '">' +
-        '<div class="quest-panel-head">[ PENALTY · 未达成 ]</div>' +
-        '<div class="quest-panel-body">' +
-        penaltyBody +
-        "</div></div>" +
-        '<div class="quest-panel quest-panel--loot' +
-        lootExtra +
-        '">' +
-        '<div class="quest-panel-head">[ REWARD · 达成 ]</div>' +
-        '<div class="quest-panel-body">' +
-        rewardBody +
-        "</div></div></div>";
     }
 
     function saveFlag() {
       const deadline = flagDeadlineEl.value;
-      const targetRaw = flagTargetEl.value;
-      if (!deadline) {
-        showToast("请选择截止日");
-        return;
-      }
-      if (targetRaw === "" || targetRaw == null) {
-        showToast("请填写目标体重");
-        return;
-      }
-      const targetKg = Number(targetRaw);
-      if (!Number.isFinite(targetKg) || targetKg <= 0) {
-        showToast("目标体重需为有效数字");
-        return;
-      }
-
-      const prev = getFlagRecord();
-      const today = getTodayString();
-      // 截止日不变则保留立约日（改截止日视为重新开一局时间线）
-      let pledgedAt = today;
-      if (prev && prev.deadline === deadline) {
-        pledgedAt = prev.pledgedAt || today;
-      }
+      const target = Number(flagTargetEl.value);
+      if (!deadline) return showToast("请设置军令截止日");
+      if (!Number.isFinite(target) || target <= 0) return showToast("请填写有效目标体重");
 
       setFlagRecord({
-        deadline: deadline,
-        targetKg: targetKg,
+        deadline,
+        targetKg: Number(target.toFixed(1)),
         penalty: flagPenaltyEl.value.trim(),
         reward: flagRewardEl.value.trim(),
-        pledgedAt: pledgedAt,
         updatedAt: Date.now()
       });
-
-      renderFlagHud();
-
-      const oldText = flagSaveBtn.textContent;
-      flagSaveBtn.textContent = "已保存";
-      window.setTimeout(function () {
-        flagSaveBtn.textContent = oldText;
-      }, 1200);
+      renderFlagStatus();
+      const oldText = saveFlagBtn.textContent;
+      saveFlagBtn.textContent = "已保存";
+      setTimeout(() => (saveFlagBtn.textContent = oldText), 1200);
       showToast("军令状已保存");
     }
 
     function clearFlag() {
-      if (!window.confirm("确定清除当前军令状？进度与立约日将重置。")) return;
       setFlagRecord(null);
       loadFlagToForm();
-      renderFlagHud();
-      showToast("已清除军令状");
+      renderFlagStatus();
+      showToast("军令状已清空");
     }
 
-    flagSaveBtn.addEventListener("click", saveFlag);
-    flagClearBtn.addEventListener("click", clearFlag);
+    saveFlagBtn.addEventListener("click", saveFlag);
+    clearFlagBtn.addEventListener("click", clearFlag);
+
+    // -----------------------------
+    // 模块四：趋势图（Chart.js）
+    // -----------------------------
+    const weightChartCanvas = document.getElementById("weightChart");
+    let weightChart = null;
+
+    function getMorningWeightSeries() {
+      const all = getDailyAllRecords();
+      const dates = Object.keys(all).sort();
+      const labels = [];
+      const values = [];
+      dates.forEach((date) => {
+        const n = Number(all[date]?.morningWeight);
+        if (Number.isFinite(n) && n > 0) {
+          labels.push(date);
+          values.push(Number(n.toFixed(2)));
+        }
+      });
+      return { labels, values };
+    }
+
+    function buildMovingAverage(values, windowSize) {
+      const result = [];
+      for (let i = 0; i < values.length; i += 1) {
+        if (i < windowSize - 1) {
+          result.push(null);
+          continue;
+        }
+        const segment = values.slice(i - windowSize + 1, i + 1);
+        const sum = segment.reduce((acc, cur) => acc + cur, 0);
+        result.push(Number((sum / windowSize).toFixed(2)));
+      }
+      return result;
+    }
+
+    function updateWeightChart() {
+      const { labels, values } = getMorningWeightSeries();
+      const style = getComputedStyle(document.body);
+      const isDark = document.body.getAttribute("data-theme") === "dark";
+      const primary = style.getPropertyValue("--primary").trim();
+      const text = style.getPropertyValue("--text").trim();
+      const muted = style.getPropertyValue("--muted").trim();
+      const avgLine = isDark ? "rgba(150, 220, 255, 0.95)" : "rgba(44, 127, 240, 0.9)";
+
+      if (weightChart) weightChart.destroy();
+
+      const ctx = weightChartCanvas.getContext("2d");
+      const gradient = ctx.createLinearGradient(0, 0, 0, 280);
+      gradient.addColorStop(0, isDark ? "rgba(122, 162, 255, 0.42)" : "rgba(77, 123, 255, 0.34)");
+      gradient.addColorStop(1, "rgba(77, 123, 255, 0.02)");
+
+      weightChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [{
+            label: "早起空腹体重(kg)",
+            data: values,
+            borderColor: primary,
+            backgroundColor: gradient,
+            borderWidth: 2.2,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            pointBackgroundColor: primary,
+            tension: 0.35,
+            fill: true
+          }, {
+            label: "7日均线",
+            data: buildMovingAverage(values, 7),
+            borderColor: avgLine,
+            borderDash: [6, 5],
+            borderWidth: 1.6,
+            pointRadius: 0,
+            tension: 0.35,
+            fill: false
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: text, usePointStyle: true, boxWidth: 8 }
+            },
+            tooltip: { mode: "index", intersect: false }
+          },
+          interaction: { mode: "nearest", intersect: false },
+          scales: {
+            x: {
+              ticks: { color: muted, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 },
+              grid: { color: "rgba(128,128,128,0.18)" }
+            },
+            y: {
+              ticks: { color: muted },
+              grid: { color: "rgba(128,128,128,0.18)" }
+            }
+          }
+        }
+      });
+    }
 
     // -----------------------------
     // 初始化
@@ -1621,10 +936,15 @@
       const today = getTodayString();
       dailyDateEl.value = today;
       measureDateEl.value = today;
+
+      const savedTheme = localStorage.getItem(STORAGE_KEYS.theme) || "dark";
+      applyTheme(savedTheme);
+
       loadDailyByDate(today);
       renderWeeklyTable();
       loadFlagToForm();
-      renderFlagHud();
+      renderFlagStatus();
+      updateWeightChart();
     }
 
     init();
